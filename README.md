@@ -8,6 +8,8 @@ export const { actions: storeActions, reducers } = makeNestedSimpleStore(initial
 
 The code below this shows the full basic usage.  There's also a typescript create-react-app, redux, and redux thunk usage starting with `./src/index.tsx` demonstrating the usage in a real app.  The app example is just a create-react-app with typescript and the instructions can be found here [here](./Create-React-App.md).
 
+Also you can access a sandbox using it without typescript [here](https://codesandbox.io/s/tquinlan92typescriptreduxutils-k2the).
+
 ```ts
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import { makeNestedSimpleStore } from 'tquinlan92-typescript-redux-utils';
