@@ -1,8 +1,12 @@
 # tquinlan92-typescript-redux-utils
 
-This exports a utility for creating a nested redux store with thunk actions.  It gives back the `reducers` to use with `combineReducers`, `actions`.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, and `reset` to reset the state to its initial state.
+This exports a utility for creating a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, and `reset` to reset the state to its initial state.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
 
-The code below this shows the basic usage.  There's also a typescript create-react-app, redux, and redux thunk usage starting with `./src/index.tsx` demonstrating the usage in a real app.  The app example is just a create-react-app with typescript and the instructions can be found here [here](./Create-React-App.md).
+```ts
+export const { actions: storeActions, reducers } = makeNestedSimpleStore(initialStates, thunkActions);
+```
+
+The code below this shows the full basic usage.  There's also a typescript create-react-app, redux, and redux thunk usage starting with `./src/index.tsx` demonstrating the usage in a real app.  The app example is just a create-react-app with typescript and the instructions can be found here [here](./Create-React-App.md).
 
 ```ts
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
