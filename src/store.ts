@@ -18,9 +18,7 @@ const initialStates = {
 
 export type AppState = typeof initialStates;
 
-export type AppThunkAction = ThunkAction<void, AppState, void, AnyAction>;
-
-function getResults(): AppThunkAction {
+function getResults(): ThunkAction<void, AppState, void, AnyAction> {
     return async (dispatch) => {
         dispatch(storeActions.state1.results(['item1', 'item2', 'item3']))
     };
