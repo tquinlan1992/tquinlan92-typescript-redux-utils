@@ -39,7 +39,9 @@ const thunkActions = {
     state1: state1ThunkActions
 };
 
-
+/* thunkActions can be anything.  It's lodash.merged with the storeActions.  
+A good use case would be thunk actions.
+*/
 export const { actions: storeActions, reducers } = makeNestedSimpleStore(initialStates, thunkActions);
 
 const appReducer = combineReducers(reducers);
