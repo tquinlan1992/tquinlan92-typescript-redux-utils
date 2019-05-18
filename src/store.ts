@@ -1,6 +1,6 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
-import { makeNestedSimpleStore } from 'tquinlan92-typescript-redux-utils';
 import thunk, { ThunkAction } from 'redux-thunk';
+import { makeNestedSimpleStore } from './tquinlan92-typescript-redux-utils';
 
 interface State1 {
     input: string;
