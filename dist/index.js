@@ -62,9 +62,10 @@ function makeSimpleReducer(reducerName, initialState) {
         });
         return creatorReducer(reducerName);
     });
-    var reset = makeActionCreatorWithReducerWithPrefix("RESET", function () {
+    var resetActionCreatorReducer = makeActionCreatorWithReducerWithPrefix("RESET", function () {
         return initialState;
     })(reducerName);
+    var reset = function () { return resetActionCreatorReducer.actionCreator(null); };
     var setAll = makeActionCreatorWithReducerWithPrefix("SET_ALL", function (state, newValue) {
         return newValue;
     })(reducerName);
@@ -72,8 +73,8 @@ function makeSimpleReducer(reducerName, initialState) {
         return lodash_1.assign({}, state, newStateValues);
     })(reducerName);
     return {
-        actions: lodash_1.assign({}, getCreators(lodash_1.assign({}, actions, { reset: reset, setAll: setAll, set: set }))),
-        reducer: createReducer(initialState, lodash_1.assign({}, actions, { reset: reset, setAll: setAll, set: set })),
+        actions: lodash_1.assign({}, getCreators(lodash_1.assign({}, actions, { setAll: setAll, set: set })), { reset: reset }),
+        reducer: createReducer(initialState, lodash_1.assign({}, actions, { resetActionCreatorReducer: resetActionCreatorReducer, setAll: setAll, set: set })),
     };
 }
 exports.makeSimpleReducer = makeSimpleReducer;

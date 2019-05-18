@@ -15,7 +15,7 @@ describe('dispatching state1 actions', () => {
     });
     describe('when state1.reset is dispatched', () => {
         it('should reset the state1 state to its initial state', () => {
-            reduxStore.dispatch(storeActions.state1.reset(null));
+            reduxStore.dispatch(storeActions.state1.reset());
             const newState = reduxStore.getState();
             expect(newState).toEqual({
                 state1: {

@@ -1,5 +1,5 @@
 import { find, mapValues, assign, Dictionary, merge, omit } from 'lodash';
-import actionCreatorFactory, { isType, Action, AnyAction, ActionCreator } from "typescript-fsa";
+import actionCreatorFactory, { isType, Action, AnyAction, ActionCreator, Meta } from "typescript-fsa";
 import { Reducer } from 'redux';
 
 export interface ActionCreatorWithReducer<StateType> {
@@ -104,12 +104,13 @@ export function makeSimpleReducer<State extends {}>(reducerName: string, initial
             reducer: StateTypeReducer<State, State[P]>;
         }
     };
-    const reset = makeActionCreatorWithReducerWithPrefix<State, null>(
+    const resetActionCreatorReducer = makeActionCreatorWithReducerWithPrefix<State, null>(
         `RESET`,
         () => {
             return initialState;
         }
     )(reducerName);
+    const reset = () => resetActionCreatorReducer.actionCreator(null);
     const setAll = makeActionCreatorWithReducerWithPrefix<State, State>(
         `SET_ALL`,
         (state, newValue) => {
@@ -127,9 +128,10 @@ export function makeSimpleReducer<State extends {}>(reducerName: string, initial
     )(reducerName);
     return {
         actions: assign({}, 
-            getCreators(assign({}, actions, {reset, setAll, set})),
+            getCreators(assign({}, actions, {setAll, set})),
+            { reset }
         ),
-        reducer: createReducer<State>(initialState, assign({}, actions, {reset, setAll, set})),
+        reducer: createReducer<State>(initialState, assign({}, actions, {resetActionCreatorReducer, setAll, set})),
     };
 }
 
@@ -155,7 +157,11 @@ export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
             [P in keyof AppState]: {
                 [A in keyof AppState[P]]: ActionCreator<AppState[P][A]>
             } & {
-                reset: ActionCreator<null>;
+                reset: () =>  {
+                    type: string;
+                    match: (action: AnyAction) => action is Action<undefined>;
+                    (payload: undefined, meta?: Meta): Action<undefined>;
+                };
                 setAll: ActionCreator<AppState[P]>;
                 set: ActionCreator<Partial<AppState[P]>>;
             } & {

@@ -63,7 +63,7 @@ describe('when makeActionCreatorWithReducer is given', () => {
             actionCreator: expect.any(Function),
             reducer: mockReducer
         });
-        const resultFromReducer = actionWithReducer.reducer({test: 'test2'}, {value: 'value2'});
+        actionWithReducer.reducer({test: 'test2'}, {value: 'value2'});
         expect(mockReducer.mock.calls[0]).toMatchObject([{ test: 'test2' }, { value: 'value2' }]);
     });
 });
