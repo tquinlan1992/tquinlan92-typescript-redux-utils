@@ -1,6 +1,6 @@
 {
   "name": "tquinlan92-typescript-redux-utils",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/tquinlan1992/tquinlan92-typescript-redux-utils"
@@ -11,7 +11,8 @@
   "dependencies": {
     "@types/lodash": "^4.14.109",
     "lodash": "^4.17.10",
-    "redux": "^4.0.0"
+    "redux": "^4.0.0",
+    "typescript-fsa": "^2.5.0"  
   },
   "devDependencies": {
     "@types/jest": "24.0.13",
