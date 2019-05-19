@@ -1,6 +1,6 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedSimpleStore } from './tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, createConnectedProps } from './tquinlan92-typescript-redux-utils';
 
 interface State1 {
     input: string;
@@ -38,3 +38,5 @@ export const { actions: storeActions, reducers } = makeNestedSimpleStore(initial
 const appReducer = combineReducers(reducers);
 
 export const reduxStore = createStore(appReducer, applyMiddleware(thunk));
+
+export const { connectedWithOwnProps, connectedNoOwnProps } = createConnectedProps<AppState>();
