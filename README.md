@@ -2,32 +2,6 @@
 
 This package gives a few useful type safety redux, react-redux, and react utilities.
 
-## createConnectedProps
-createConnectedComponent takes a `AppState` as a generic type.  It returns back two methods `connectedWithOwnProps` and `connectedNoOwnProps`.  
-
-### connectedNoOwnProps
-`connectedNoOwnProps` Is a method to create a connected component.  T
-
-### connectedWithOwnProps
-`connectedWithOwnProps` takes `OwnProps` as a generic type and returns back a method to create a connected comopnent.  This method is the same as `connectedNoOwnProps` but with `OwnProps`.
-
-```ts
-export declare function createConnectedProps<AppState>(): {
-    connectedWithOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles, Component: React.FunctionComponent) => {
-        Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>;
-        mapStateToProps: MapStateToProps;
-        mapDispatchToProps: MapDispatchToProps;
-        Connected: import("react-redux").ConnectedComponentClass<OwnProps>;
-    };
-    connectedNoOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles, Component: React.FunctionComponent) => {
-        Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>>;
-        mapStateToProps: MapStateToProps;
-        mapDispatchToProps: MapDispatchToProps;
-        Connected: import("react-redux").ConnectedComponentClass;
-    };
-};
-```
-
 ## makeNestedSimpleStore
 makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, and `reset` to reset the state to its initial state.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
 
@@ -133,4 +107,30 @@ describe('dispatching state1 actions', () => {
         })
     });
 });
+```
+
+## createConnectedProps
+createConnectedComponent takes a `AppState` as a generic type.  It returns back two methods `connectedWithOwnProps` and `connectedNoOwnProps`.  
+
+### connectedNoOwnProps
+`connectedNoOwnProps` Is a method to create a connected component.  T
+
+### connectedWithOwnProps
+`connectedWithOwnProps` takes `OwnProps` as a generic type and returns back a method to create a connected comopnent.  This method is the same as `connectedNoOwnProps` but with `OwnProps`.
+
+```ts
+export declare function createConnectedProps<AppState>(): {
+    connectedWithOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles, Component: React.FunctionComponent) => {
+        Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>;
+        mapStateToProps: MapStateToProps;
+        mapDispatchToProps: MapDispatchToProps;
+        Connected: import("react-redux").ConnectedComponentClass<OwnProps>;
+    };
+    connectedNoOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles, Component: React.FunctionComponent) => {
+        Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>>;
+        mapStateToProps: MapStateToProps;
+        mapDispatchToProps: MapDispatchToProps;
+        Connected: import("react-redux").ConnectedComponentClass;
+    };
+};
 ```
