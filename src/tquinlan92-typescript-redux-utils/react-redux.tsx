@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { MapDispatchToPropsParam, ResolveThunks, connect } from "react-redux";
 import jss from 'jss';
 
