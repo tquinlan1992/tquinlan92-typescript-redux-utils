@@ -9,6 +9,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
+    "@types/jss": "^9.5.8",
     "@types/lodash": "^4.14.109",
     "jss": "^9.8.7",
     "lodash": "^4.17.10",
@@ -18,7 +19,6 @@
   },
   "devDependencies": {
     "@types/jest": "24.0.13",
-    "@types/jss": "^9.5.8",
     "@types/node": "12.0.2",
     "@types/react": "16.8.17",
     "@types/react-dom": "16.8.4",
