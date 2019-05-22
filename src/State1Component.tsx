@@ -15,7 +15,7 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
         getResults: storeActions.state1.getResults,
         reset: storeActions.state1.reset
     }, 
-    {button: {backgroundColor: 'green'}},
+    {button: {background: 'green'}},
     ({ input, results, onChange, getResults, reset, classes }) => {
         const component = (
             <>
