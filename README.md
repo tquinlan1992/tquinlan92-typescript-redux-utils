@@ -119,7 +119,7 @@ createConnectedComponent takes a `AppState` as a generic type.  It returns back 
 `connectedWithOwnProps` takes `OwnProps` as a generic type and returns back a method to create a connected comopnent.  This method is the same as `connectedNoOwnProps` but with `OwnProps`.
 
 ```ts
-export declare function createConnectedProps<AppState>(): {
+function createConnectedProps<AppState>(): {
     connectedWithOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles, Component: React.FunctionComponent) => {
         Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>;
         mapStateToProps: MapStateToProps;
