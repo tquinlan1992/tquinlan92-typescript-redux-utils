@@ -2,7 +2,7 @@
 
 This package gives a few useful type safety redux, react-redux, and react utilities.
 
-## makeNestedSimpleStore
+## `makeNestedSimpleStore`
 makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, and `reset` to reset the state to its initial state.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
 
 ```ts
@@ -109,13 +109,13 @@ describe('dispatching state1 actions', () => {
 });
 ```
 
-## createConnectedProps
+## `createConnectedProps`
 createConnectedComponent takes a `AppState` as a generic type.  It returns back two methods `connectedWithOwnProps` and `connectedNoOwnProps`.  
 
-### connectedNoOwnProps
+### `connectedNoOwnProps`
 `connectedNoOwnProps` Is a method to create a connected component.  T
 
-### connectedWithOwnProps
+### `connectedWithOwnProps`
 `connectedWithOwnProps` takes `OwnProps` as a generic type and returns back a method to create a connected comopnent.  This method is the same as `connectedNoOwnProps` but with `OwnProps`.
 
 ```ts
@@ -134,3 +134,40 @@ function createConnectedProps<AppState>(): {
     };
 };
 ```
+
+#### Example Usage of `connectedNoOwnProps`
+```ts
+import React from 'react';
+import { storeActions, connectedNoOwnProps } from "./store";
+
+
+export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
+    state => {
+        const { input, results } = state.state1;
+        return {
+            input,
+            results
+        }
+    }, 
+    {
+        onChange: storeActions.state1.input,
+        getResults: storeActions.state1.getResults,
+        reset: storeActions.state1.reset
+    }, 
+    {button: {background: 'green'}},
+    ({ input, results, onChange, getResults, reset, classes }) => {
+        return (
+            <>
+                <input value={input} onChange={event => onChange(event.target.value)} />
+                <button onClick={getResults} className={classes.button}> Get Results </button>
+                <button onClick={reset}>Reset</button>
+                <ul>
+                    {results.map(result => {
+                        return <li>{result}</li>
+                    })}
+                </ul>
+            </>
+        )
+    })
+```
+

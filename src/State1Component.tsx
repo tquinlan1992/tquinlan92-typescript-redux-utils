@@ -17,7 +17,7 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
     }, 
     {button: {background: 'green'}},
     ({ input, results, onChange, getResults, reset, classes }) => {
-        const component = (
+        return (
             <>
                 <input value={input} onChange={event => onChange(event.target.value)} />
                 <button onClick={getResults} className={classes.button}> Get Results </button>
@@ -29,6 +29,4 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
                 </ul>
             </>
         )
-
-        return component;
     })
