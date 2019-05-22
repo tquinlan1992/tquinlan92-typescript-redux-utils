@@ -10,13 +10,15 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@types/lodash": "^4.14.109",
+    "jss": "^9.8.7",
     "lodash": "^4.17.10",
     "react-redux": "^7.0.3",
     "redux": "^4.0.0",
-    "typescript-fsa": "^2.5.0"  
+    "typescript-fsa": "^2.5.0"
   },
   "devDependencies": {
     "@types/jest": "24.0.13",
+    "@types/jss": "^9.5.8",
     "@types/node": "12.0.2",
     "@types/react": "16.8.17",
     "@types/react-dom": "16.8.4",

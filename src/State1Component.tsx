@@ -12,13 +12,16 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
     }, 
     {
         onChange: storeActions.state1.input,
-        getResults: storeActions.state1.getResults
+        getResults: storeActions.state1.getResults,
+        reset: storeActions.state1.reset
     }, 
-    ({ input, results, onChange, getResults }) => {
-        return (
+    {button: {backgroundColor: 'green'}},
+    ({ input, results, onChange, getResults, reset, classes }) => {
+        const component = (
             <>
                 <input value={input} onChange={event => onChange(event.target.value)} />
-                <button onClick={getResults}> Get Results </button>
+                <button onClick={getResults} className={classes.button}> Get Results </button>
+                <button onClick={reset}>Reset</button>
                 <ul>
                     {results.map(result => {
                         return <li>{result}</li>
@@ -26,4 +29,6 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
                 </ul>
             </>
         )
+
+        return component;
     })
