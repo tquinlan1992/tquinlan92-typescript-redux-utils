@@ -178,7 +178,7 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
 import React from 'react';
 import { storeActions, createConnectedProps, AppState } from "./store";
 
-export const { connectedNoOwnProps } = createConnectedProps<AppState>();
+export const { connectedWithOwnProps } = createConnectedProps<AppState>();
 
 export const { Connected: State1ComponentConnected } = connectedWithOwnProps<{valueFromProp: string;}>()(
     (state, {valueFromProp}) => {
