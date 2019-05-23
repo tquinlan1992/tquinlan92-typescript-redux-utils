@@ -22,14 +22,17 @@ function withStyles(styles) {
 }
 exports.withStyles = withStyles;
 function createConnectedComponent() {
-    return function (mapStateToProps, mapDispatchToProps, Component, styles) {
+    return function (mapStateToProps, mapDispatchToProps, styles) {
+        if (mapDispatchToProps === void 0) { mapDispatchToProps = {}; }
         if (styles === void 0) { styles = {}; }
-        var StyledComponent = withStyles(styles)(Component);
-        return {
-            Component: Component,
-            mapStateToProps: mapStateToProps,
-            mapDispatchToProps: mapDispatchToProps,
-            Connected: react_redux_1.connect(mapStateToProps, mapDispatchToProps)(StyledComponent)
+        return function (Component) {
+            var StyledComponent = withStyles(styles)(Component);
+            return {
+                Component: Component,
+                mapStateToProps: mapStateToProps,
+                mapDispatchToProps: mapDispatchToProps,
+                Connected: react_redux_1.connect(mapStateToProps, mapDispatchToProps)(StyledComponent)
+            };
         };
     };
 }

@@ -120,13 +120,13 @@ createConnectedComponent takes a `AppState` as a generic type.  It returns back 
 
 ```ts
 function createConnectedProps<AppState>(): {
-    connectedWithOwnProps: <OwnProps>() => (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, Component: React.FunctionComponent, styles: Styles) => {
+    connectedWithOwnProps: <OwnProps>() => (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles) => (Component: React.FunctionComponent) => {
         Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>;
         mapStateToProps: MapStateToProps;
         mapDispatchToProps: MapDispatchToProps;
         Connected: import("react-redux").ConnectedComponentClass<OwnProps>;
     };
-    connectedNoOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, Component: React.FunctionComponent, styles: Styles) => {
+    connectedNoOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles) => (Component: React.FunctionComponent) => {
         Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>>;
         mapStateToProps: MapStateToProps;
         mapDispatchToProps: MapDispatchToProps;

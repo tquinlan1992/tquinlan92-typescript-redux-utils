@@ -19,20 +19,20 @@ function createConnectedComponent<AppState, OwnProps = {}>() {
     return function <
         MapStateToProps extends (state: AppState, ownProps: OwnProps) => ({}),
         MapDispatchToProps extends MapDispatchToPropsParam<{}, {}>,
-        Component extends React.FC,
         Styles = {}>(
             mapStateToProps: MapStateToProps,
-            mapDispatchToProps: MapDispatchToProps,
-            Component: React.FC<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<typeof styles>>>, // eslint-disable-line
+            mapDispatchToProps: MapDispatchToProps = {} as any,
             styles: Styles = {} as any
         ) {
-        const StyledComponent = withStyles(styles)(Component);
-        return {
-            Component,
-            mapStateToProps,
-            mapDispatchToProps,
-            Connected: connect<AppState, ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps>, OwnProps>(mapStateToProps as any, mapDispatchToProps as any)(StyledComponent)
-        };
+        return (Component: React.FC<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<typeof styles>>>) => {
+            const StyledComponent = withStyles(styles)(Component);
+            return {
+                Component,
+                mapStateToProps,
+                mapDispatchToProps,
+                Connected: connect<AppState, ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps>, OwnProps>(mapStateToProps as any, mapDispatchToProps as any)(StyledComponent)
+            };
+        }
     }
 }
 
