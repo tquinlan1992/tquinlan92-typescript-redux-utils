@@ -110,23 +110,23 @@ describe('dispatching state1 actions', () => {
 ```
 
 ## `createConnectedProps`
-createConnectedComponent takes a `AppState` as a generic type.  It returns back two methods `connectedWithOwnProps` and `connectedNoOwnProps`.  
+createConnectedComponent takes a `AppState` as a generic type.  It returns back two methods `connectedWithOwnProps` and `connectedNoOwnProps` to create a connected component with optional JSS styles.
 
 ### `connectedNoOwnProps`
 `connectedNoOwnProps` Is a method to create a connected component.  T
 
 ### `connectedWithOwnProps`
-`connectedWithOwnProps` takes `OwnProps` as a generic type and returns back a method to create a connected comopnent.  This method is the same as `connectedNoOwnProps` but with `OwnProps`.
+`connectedWithOwnProps` takes `OwnProps` as a generic type and returns back a method to create a connected compnent.  This method is the same as `connectedNoOwnProps` but with `OwnProps`.
 
 ```ts
 function createConnectedProps<AppState>(): {
-    connectedWithOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles, Component: React.FunctionComponent) => {
+    connectedWithOwnProps: <OwnProps>() => (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, Component: React.FunctionComponent, styles: Styles) => {
         Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>;
         mapStateToProps: MapStateToProps;
         mapDispatchToProps: MapDispatchToProps;
         Connected: import("react-redux").ConnectedComponentClass<OwnProps>;
     };
-    connectedNoOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles, Component: React.FunctionComponent) => {
+    connectedNoOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, Component: React.FunctionComponent, styles: Styles) => {
         Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>>;
         mapStateToProps: MapStateToProps;
         mapDispatchToProps: MapDispatchToProps;
@@ -172,18 +172,7 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
 )
 ```
 
-## `StyleComponent`
-`StyleComponent` creates a component with JSS styles given as props
-### Usage of `StyleComponent`
-```ts
-import { withStyles } from './tquinlan92-typescript-redux-utils';
-
-const StyledComponent = withStyles({button: {background: 'green'}})({classes}) => {
-    return <button className={classes.button} />
-})
-```
-
-#### Usage of `connectedNoOwnProps`
+#### Usage of `connectedWithOwnProps`
 ```tsx
 import React from 'react';
 import { storeActions, connectedWithOwnProps } from "./store";
@@ -219,4 +208,32 @@ export const { Connected: State1ComponentConnected } = connectedWithOwnProps<{va
     },
     {button: {background: 'green'}},
 )
+```
+
+## `withStyles`
+`StyleComponent` creates a component with JSS styles given as props
+### Usage of `withStyles`
+```tsx
+import { withStyles, WithStyles } from './tquinlan92-typescript-redux-utils';
+
+// Example with functional component in call
+const StyledComponent = withStyles({button: {background: 'green'}})({classes}) => {
+    return <button className={classes.button} />
+})
+
+// Example with functional component outside of call
+
+const styles = {
+    button: {
+        background: 'green'
+    }
+}
+
+const ComponentWithoutStyles: React.FC<WithStyles<typeof styles>>({classes}) {
+    return <button className={classes.button} />
+}
+
+const StyledComponent2 = withStyles({button: {background: 'green'}})({classes}) => {
+    return <button className={classes.button} />
+})
 ```
