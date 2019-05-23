@@ -8,7 +8,7 @@ interface WithStyles<Styles> {
     }
 }
 
-function StyleComponent(styles: any, Component: React.FC<any>) {
+function StyleComponent(styles: any, Component: React.ComponentType<any>) {
     const { classes } = jss.createStyleSheet(styles).attach()
     return (props: Object) => (<Component classes={classes} {...props} />);
 
@@ -22,7 +22,7 @@ function createConnectedComponent<AppState, OwnProps = {}>() {
             mapStateToProps: MapStateToProps,
             mapDispatchToProps: MapDispatchToProps,
             styles: Styles,
-            Component: React.FC<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<typeof styles>>>
+            Component: React.ComponentType<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<typeof styles>>>
         ) {
         const StyledComponent = StyleComponent(styles, Component);
         return {
