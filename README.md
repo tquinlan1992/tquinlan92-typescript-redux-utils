@@ -138,8 +138,9 @@ function createConnectedProps<AppState>(): {
 #### Usage of `connectedNoOwnProps`
 ```tsx
 import React from 'react';
-import { storeActions, connectedNoOwnProps } from "./store";
+import { storeActions, createConnectedProps, AppState } from "./store";
 
+export const { connectedNoOwnProps } = createConnectedProps<AppState>();
 
 export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
     state => {
@@ -175,8 +176,9 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
 #### Usage of `connectedWithOwnProps`
 ```tsx
 import React from 'react';
-import { storeActions, connectedWithOwnProps } from "./store";
+import { storeActions, createConnectedProps, AppState } from "./store";
 
+export const { connectedNoOwnProps } = createConnectedProps<AppState>();
 
 export const { Connected: State1ComponentConnected } = connectedWithOwnProps<{valueFromProp: string;}>()(
     (state, {valueFromProp}) => {
