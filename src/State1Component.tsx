@@ -1,5 +1,5 @@
 import React from 'react';
-import { storeActions, connectedNoOwnProps } from "./store";
+import { storeActions, connectedNoOwnProps, connectedWithOwnProps } from "./store";
 
 
 export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
@@ -9,13 +9,13 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
             input,
             results
         }
-    }, 
+    },
     {
         onChange: storeActions.state1.input,
         getResults: storeActions.state1.getResults,
         reset: storeActions.state1.reset
-    }, 
-    {button: {background: 'green'}},
+    },
+    { button: { background: 'green' } },
     ({ input, results, onChange, getResults, reset, classes }) => {
         return (
             <>
@@ -29,4 +29,21 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
                 </ul>
             </>
         )
-    })
+    }
+)
+
+export const { Connected: ComponentWithProps } = connectedWithOwnProps<{ valueFromProp: string; }>()(
+    (state, { valueFromProp }) => {
+        return {
+            valueFromProp
+        }
+    },
+    {
+    },
+    {},
+    ({ valueFromProp }) => {
+        return (
+            <h1>{valueFromProp}</h1>
+        )
+    }
+)
