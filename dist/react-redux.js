@@ -14,13 +14,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var react_redux_1 = require("react-redux");
 var jss_1 = require("jss");
-function StyleComponent(styles, Component) {
+function withStyles(styles) {
     var classes = jss_1.default.createStyleSheet(styles).attach().classes;
-    return function (props) { return (React.createElement(Component, __assign({ classes: classes }, props))); };
+    return function (Component) {
+        return function (props) { return (React.createElement(Component, __assign({ classes: classes }, props))); };
+    };
 }
+exports.withStyles = withStyles;
 function createConnectedComponent() {
-    return function (mapStateToProps, mapDispatchToProps, styles, Component) {
-        var StyledComponent = StyleComponent(styles, Component);
+    return function (mapStateToProps, mapDispatchToProps, Component, styles) {
+        if (styles === void 0) { styles = {}; }
+        var StyledComponent = withStyles(styles)(Component);
         return {
             Component: Component,
             mapStateToProps: mapStateToProps,

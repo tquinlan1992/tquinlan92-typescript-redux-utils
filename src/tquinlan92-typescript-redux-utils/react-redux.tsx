@@ -2,29 +2,31 @@ import * as React from 'react';
 import { MapDispatchToPropsParam, ResolveThunks, connect } from "react-redux";
 import jss from 'jss';
 
-interface WithStyles<Styles> {
+export interface WithStyles<Styles> {
     classes: {
         [P in keyof Styles]: string;
     }
 }
 
-function StyleComponent(styles: any, Component: React.FC<any>) {
+export function withStyles<Styles = {}>(styles: Styles) {
     const { classes } = jss.createStyleSheet(styles).attach()
-    return (props: Object) => (<Component classes={classes} {...props} />);
-
+    return function <OtherProps = {}>(Component: React.FC<WithStyles<Styles> & OtherProps>) {
+        return (props: any) => (<Component classes={classes} {...props} />);
+    }
 }
 
 function createConnectedComponent<AppState, OwnProps = {}>() {
     return function <
         MapStateToProps extends (state: AppState, ownProps: OwnProps) => ({}),
         MapDispatchToProps extends MapDispatchToPropsParam<{}, {}>,
-        Styles extends {}>(
+        Component extends React.FC,
+        Styles = {}>(
             mapStateToProps: MapStateToProps,
             mapDispatchToProps: MapDispatchToProps,
-            styles: Styles,
-            Component: React.FC<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<typeof styles>>>
+            Component: React.FC<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<typeof styles>>>, // eslint-disable-line
+            styles: Styles = {} as any
         ) {
-        const StyledComponent = StyleComponent(styles, Component);
+        const StyledComponent = withStyles(styles)(Component);
         return {
             Component,
             mapStateToProps,

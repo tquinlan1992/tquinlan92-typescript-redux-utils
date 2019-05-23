@@ -135,8 +135,8 @@ function createConnectedProps<AppState>(): {
 };
 ```
 
-#### Example Usage of `connectedNoOwnProps`
-```ts
+#### Usage of `connectedNoOwnProps`
+```tsx
 import React from 'react';
 import { storeActions, connectedNoOwnProps } from "./store";
 
@@ -154,7 +154,6 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
         getResults: storeActions.state1.getResults,
         reset: storeActions.state1.reset
     }, 
-    {button: {background: 'green'}},
     ({ input, results, onChange, getResults, reset, classes }) => {
         return (
             <>
@@ -168,6 +167,56 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
                 </ul>
             </>
         )
-    })
+    },
+    {button: {background: 'green'}},
+)
 ```
 
+## `StyleComponent`
+`StyleComponent` creates a component with JSS styles given as props
+### Usage of `StyleComponent`
+```ts
+import { withStyles } from './tquinlan92-typescript-redux-utils';
+
+const StyledComponent = withStyles({button: {background: 'green'}})({classes}) => {
+    return <button className={classes.button} />
+})
+```
+
+#### Usage of `connectedNoOwnProps`
+```tsx
+import React from 'react';
+import { storeActions, connectedWithOwnProps } from "./store";
+
+
+export const { Connected: State1ComponentConnected } = connectedWithOwnProps<{valueFromProp: string;}>()(
+    (state, {valueFromProp}) => {
+        const { input, results } = state.state1;
+        return {
+            input,
+            results,
+            valueFromProp
+        }
+    }, 
+    {
+        onChange: storeActions.state1.input,
+        getResults: storeActions.state1.getResults,
+        reset: storeActions.state1.reset
+    }, 
+    ({ input, results, onChange, getResults, reset, classes, valueFromProp }) => {
+        return (
+            <>
+                <input value={input} onChange={event => onChange(event.target.value)} />
+                <button onClick={getResults} className={classes.button}> {valueFromProp} </button>
+                <button onClick={reset}>Reset</button>
+                <ul>
+                    {results.map(result => {
+                        return <li>{result}</li>
+                    })}
+                </ul>
+            </>
+        )
+    },
+    {button: {background: 'green'}},
+)
+```

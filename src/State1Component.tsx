@@ -1,5 +1,6 @@
 import React from 'react';
 import { storeActions, connectedNoOwnProps, connectedWithOwnProps } from "./store";
+import { WithStyles, withStyles } from './tquinlan92-typescript-redux-utils';
 
 
 export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
@@ -15,7 +16,6 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
         getResults: storeActions.state1.getResults,
         reset: storeActions.state1.reset
     },
-    { button: { background: 'green' } },
     ({ input, results, onChange, getResults, reset, classes }) => {
         return (
             <>
@@ -29,8 +29,16 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
                 </ul>
             </>
         )
-    }
+    },
+    { button: { background: 'green' } }
 )
+
+function TomComponent({value, classes}: {value: string;} & WithStyles<typeof styles>) {
+    return <h1 className={classes.header}>{value}</h1>
+}
+
+const styles = {header: {color: 'orange'}};
+const StyledComponent = withStyles(styles)(TomComponent);
 
 export const { Connected: ComponentWithProps } = connectedWithOwnProps<{ valueFromProp: string; }>()(
     (state, { valueFromProp }) => {
@@ -38,12 +46,8 @@ export const { Connected: ComponentWithProps } = connectedWithOwnProps<{ valueFr
             valueFromProp
         }
     },
-    {
-    },
     {},
-    ({ valueFromProp }) => {
-        return (
-            <h1>{valueFromProp}</h1>
-        )
+    ({valueFromProp}) => {
+        return <StyledComponent value={valueFromProp} />
     }
 )
