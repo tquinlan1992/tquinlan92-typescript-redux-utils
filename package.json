@@ -29,7 +29,7 @@
     "react-scripts": "3.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "tquinlan92-typescript-redux-utils": "^1.7.1",
+    "tquinlan92-typescript-redux-utils": "^1.8.0",
     "typescript": "3.1.6"
   },
   "scripts": {
