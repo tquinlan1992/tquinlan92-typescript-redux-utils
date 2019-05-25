@@ -1,6 +1,6 @@
 # tquinlan92-typescript-redux-utils
 
-This package gives a few useful type safety redux, react-redux, and react utilities.
+This package gives a few useful type-safe redux, react-redux, and react utilities.
 
 ## `makeNestedSimpleStore`
 makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, and `reset` to reset the state to its initial state.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
