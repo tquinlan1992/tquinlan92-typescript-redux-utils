@@ -13,9 +13,9 @@ describe('dispatching state1 actions', () => {
             })
         })
     });
-    describe('when state1.reset is dispatched', () => {
+    describe('when state1.resetAll is dispatched', () => {
         it('should reset the state1 state to its initial state', () => {
-            reduxStore.dispatch(storeActions.state1.reset());
+            reduxStore.dispatch(storeActions.state1.resetAll());
             const newState = reduxStore.getState();
             expect(newState).toEqual({
                 state1: {
@@ -45,6 +45,19 @@ describe('dispatching state1 actions', () => {
                 state1: {
                     input: 'newValueFromSetAll',
                     results: ['item1']
+                }
+            })
+        })
+    });
+    describe('when state1.reset is dispatched', () => {
+        it('should reset the properties in params', () => {
+            reduxStore.dispatch(storeActions.state1.results(['result1', 'result2', 'result3']));
+            reduxStore.dispatch(storeActions.state1.reset(['results']));
+            const newState = reduxStore.getState();
+            expect(newState).toEqual({
+                state1: {
+                    input: 'newValueFromSetAll',
+                    results: []
                 }
             })
         })

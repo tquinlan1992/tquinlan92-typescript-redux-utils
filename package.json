@@ -1,7 +1,7 @@
 {
   "name": "tquinlan92-typescript-redux-utils",
   "author": "Tom Quinlan<tquinlan1992@gmail.com>",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/tquinlan1992/tquinlan92-typescript-redux-utils"
@@ -35,7 +35,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts --inspect-brk test",
     "eject": "react-scripts eject",
     "build-npm": "tsc -p ./src/tquinlan92-typescript-redux-utils"
   },

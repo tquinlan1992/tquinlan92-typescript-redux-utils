@@ -71,6 +71,10 @@ export declare function makeSimpleReducer<State extends {}>(reducerName: string,
             actionCreator: ActionCreator<Partial<State>>;
             reducer: StateTypeReducer<State, Partial<State>>;
         };
+        reset: {
+            actionCreator: ActionCreator<"fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
+            reducer: StateTypeReducer<State, "fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
+        };
     })]: ({ [P in keyof State]: {
         actionCreator: ActionCreator<State[P]>;
         reducer: StateTypeReducer<State, State[P]>;
@@ -83,8 +87,12 @@ export declare function makeSimpleReducer<State extends {}>(reducerName: string,
             actionCreator: ActionCreator<Partial<State>>;
             reducer: StateTypeReducer<State, Partial<State>>;
         };
+        reset: {
+            actionCreator: ActionCreator<"fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
+            reducer: StateTypeReducer<State, "fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
+        };
     })[P]["actionCreator"]; } & {
-        reset: () => Action<null>;
+        resetAll: () => Action<null>;
     };
     reducer: (state: State | undefined, incomingAction: Action<AnyAction>) => State;
 };
@@ -98,7 +106,8 @@ export declare function getActions<T extends {
 export declare function makeNestedSimpleReducerSimpleActions<AppState>(state: any): {
     reducers: { [P in keyof AppState]: Reducer<AppState[P], AnyAction>; };
     actions: { [P in keyof AppState]: { [A in keyof AppState[P]]: ActionCreator<AppState[P][A]>; } & {
-        reset: () => {
+        reset: ActionCreator<(keyof AppState[P])[]>;
+        resetAll: () => {
             (payload: undefined, meta?: {
                 [key: string]: any;
             } | null | undefined): Action<undefined>;
@@ -112,7 +121,8 @@ export declare function makeNestedSimpleReducerSimpleActions<AppState>(state: an
 };
 export declare function makeNestedSimpleStore<State, ThunkActions>(state: State, thunkActions?: ThunkActions): {
     actions: { [P in keyof State]: { [A in keyof State[P]]: ActionCreator<State[P][A]>; } & {
-        reset: () => {
+        reset: ActionCreator<(keyof State[P])[]>;
+        resetAll: () => {
             (payload: undefined, meta?: {
                 [key: string]: any;
             } | null | undefined): Action<undefined>;

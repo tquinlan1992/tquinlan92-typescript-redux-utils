@@ -28,15 +28,15 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
     {
         onChange: storeActions.state1.input,
         getResults: storeActions.state1.getResults,
-        reset: storeActions.state1.reset
+        resetAll: storeActions.state1.resetAll
     },
     { button: { background: 'green' } }
-)(({ input, results, onChange, getResults, reset, classes }) => {
+)(({ input, results, onChange, getResults, resetAll, classes }) => {
     return (
         <>
             <input value={input} onChange={event => onChange(event.target.value)} />
             <button onClick={getResults} className={classes.button}> Get Results </button>
-            <button onClick={reset}>Reset</button>
+            <button onClick={resetAll}>Reset</button>
             <ul>
                 {results.map(result => {
                     return <li key={result}>{result}</li>

@@ -1,4 +1,4 @@
-import { find, mapValues, assign, Dictionary, merge, omit } from 'lodash';
+import { find, mapValues, assign, Dictionary, merge, omit, pick } from 'lodash';
 import actionCreatorFactory, { isType, Action, AnyAction, ActionCreator, Meta } from "typescript-fsa";
 import { Reducer } from 'redux';
 
@@ -104,13 +104,23 @@ export function makeSimpleReducer<State extends {}>(reducerName: string, initial
                 reducer: StateTypeReducer<State, State[P]>;
             }
         };
-    const resetActionCreatorReducer = makeActionCreatorWithReducerWithPrefix<State, null>(
+    const reset = makeActionCreatorWithReducerWithPrefix<State, keyof State[]>(
         `RESET`,
+        (state, keysToReset) => {
+            console.log('here');
+            return assign({},
+                state,
+                pick(initialState, keysToReset)
+            );
+        }
+    )(reducerName);
+    const resetAllActionCreatorReducer = makeActionCreatorWithReducerWithPrefix<State, null>(
+        `RESET_All`,
         () => {
             return initialState;
         }
     )(reducerName);
-    const reset = () => resetActionCreatorReducer.actionCreator(null);
+    const resetAll = () => resetAllActionCreatorReducer.actionCreator(null);
     const setAll = makeActionCreatorWithReducerWithPrefix<State, State>(
         `SET_ALL`,
         (state, newValue) => {
@@ -128,10 +138,10 @@ export function makeSimpleReducer<State extends {}>(reducerName: string, initial
     )(reducerName);
     return {
         actions: assign({},
-            getCreators(assign({}, actions, { setAll, set })),
-            { reset }
+            getCreators(assign({}, actions, { setAll, set, reset })),
+            { resetAll }
         ),
-        reducer: createReducer<State>(initialState, assign({}, actions, { resetActionCreatorReducer, setAll, set })),
+        reducer: createReducer<State>(initialState, assign({}, actions, { resetAllActionCreatorReducer, setAll, set, reset })),
     };
 }
 
@@ -165,7 +175,8 @@ export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
                 [P in keyof AppState]: {
                     [A in keyof AppState[P]]: ActionCreator<AppState[P][A]>
                 } & {
-                    reset: () => {
+                    reset: ActionCreator<Array<keyof AppState[P]>>;
+                    resetAll: () => {
                         type: string;
                         match: (action: AnyAction) => action is Action<undefined>;
                         (payload: undefined, meta?: Meta): Action<undefined>;

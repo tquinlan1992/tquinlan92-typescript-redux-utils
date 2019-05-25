@@ -3,7 +3,7 @@
 This package gives a few useful type-safe redux, react-redux, and react utilities.
 
 ## `makeNestedSimpleStore`
-makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, and `reset` to reset the state to its initial state.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
+makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, `reset` to reset a state to its initial state, `resetAll` to reset the state whole to its initial state.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
 
 ```ts
 export const { actions: storeActions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
@@ -86,9 +86,9 @@ describe('dispatching state1 actions', () => {
             })
         })
     });
-    describe('when state1.reset is dispatched', () => {
+    describe('when state1.resetAll is dispatched', () => {
         it('should reset the state1 state to its initial state', () => {
-            reduxStore.dispatch(storeActions.state1.reset());
+            reduxStore.dispatch(storeActions.state1.resetAll());
             const newState = reduxStore.getState();
             expect(newState).toEqual({
                 state1: {
@@ -118,6 +118,19 @@ describe('dispatching state1 actions', () => {
                 state1: {
                     input: 'newValueFromSetAll',
                     results: ['item1']
+                }
+            })
+        })
+    });
+    describe('when state1.reset is dispatched', () => {
+        it('should reset the properties in params', () => {
+            reduxStore.dispatch(storeActions.state1.results(['result1', 'result2', 'result3']));
+            reduxStore.dispatch(storeActions.state1.reset(['results']));
+            const newState = reduxStore.getState();
+            expect(newState).toEqual({
+                state1: {
+                    input: 'newValueFromSetAll',
+                    results: []
                 }
             })
         })
