@@ -17,7 +17,9 @@ var jss_1 = require("jss");
 function withStyles(styles) {
     var classes = jss_1.default.createStyleSheet(styles).attach().classes;
     return function (Component) {
-        return function (props) { return (React.createElement(Component, __assign({ classes: classes }, props))); };
+        return function (props) {
+            return React.createElement(Component, __assign({ classes: classes }, props));
+        };
     };
 }
 exports.withStyles = withStyles;

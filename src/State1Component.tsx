@@ -1,11 +1,25 @@
 import React from 'react';
-import { storeActions, connectedNoOwnProps, connectedWithOwnProps } from "./store";
+import { storeActions, connectedNoOwnProps, connectedWithOwnProps, selectors } from "./store";
 import { WithStyles, withStyles } from './tquinlan92-typescript-redux-utils';
+import { times } from 'lodash';
+import { createSelector } from 'reselect'
 
+function mapResults(results: string[]) {
+    times(1000, () => {
+        console.log('heavy computation');
+    });
+    return results.map(result => result);
+}
+
+const getResultsSelector = createSelector(
+    selectors.state1.results,
+    mapResults
+)
 
 export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
     (state) => {
-        const { input, results } = state.state1;
+        const input = selectors.state1.input(state);
+        const results = getResultsSelector(state);
         return {
             input,
             results
@@ -25,19 +39,19 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
             <button onClick={reset}>Reset</button>
             <ul>
                 {results.map(result => {
-                    return <li>{result}</li>
+                    return <li key={result}>{result}</li>
                 })}
             </ul>
         </>
     )
 })
 
-function TomComponent({ value, classes }: { value: string; } & WithStyles<typeof styles>) {
+function ComponentToStyle({ value, classes }: { value: string; } & WithStyles<typeof styles>) {
     return <h1 className={classes.header}>{value}</h1>
 }
 
 const styles = { header: { color: 'orange' } };
-const StyledComponent = withStyles(styles)(TomComponent);
+const StyledComponent = withStyles(styles)(ComponentToStyle);
 
 export const { Connected: ComponentWithProps } = connectedWithOwnProps<{ valueFromProp: string; }>()(
     (state, { valueFromProp }) => {
@@ -45,5 +59,5 @@ export const { Connected: ComponentWithProps } = connectedWithOwnProps<{ valueFr
             valueFromProp
         }
     })(({ valueFromProp }) => {
-        return <StyledComponent value={valueFromProp} />
+        return <StyledComponent value={valueFromProp} />;
     })

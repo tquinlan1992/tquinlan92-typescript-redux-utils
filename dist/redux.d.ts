@@ -108,6 +108,7 @@ export declare function makeNestedSimpleReducerSimpleActions<AppState>(state: an
         setAll: ActionCreator<AppState[P]>;
         set: ActionCreator<Partial<AppState[P]>>;
     } & { [A in keyof AppState[P]]: AppState[P][A]; }; };
+    selectors: { [P in keyof AppState]: { [A in keyof AppState[P]]: (state: AppState) => AppState[P][A]; }; };
 };
 export declare function makeNestedSimpleStore<State, ThunkActions>(state: State, thunkActions?: ThunkActions): {
     actions: { [P in keyof State]: { [A in keyof State[P]]: ActionCreator<State[P][A]>; } & {
@@ -122,5 +123,6 @@ export declare function makeNestedSimpleStore<State, ThunkActions>(state: State,
         set: ActionCreator<Partial<State[P]>>;
     } & { [A in keyof State[P]]: State[P][A]; }; } & ThunkActions;
     reducers: { [P in keyof State]: Reducer<State[P], AnyAction>; };
+    selectors: { [P in keyof State]: { [A in keyof State[P]]: (state: State) => State[P][A]; }; };
 };
 export {};

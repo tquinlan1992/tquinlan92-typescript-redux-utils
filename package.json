@@ -1,6 +1,6 @@
 {
   "name": "tquinlan92-typescript-redux-utils",
-  "version": "1.6.0",
+  "version": "1.7.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/tquinlan1992/tquinlan92-typescript-redux-utils"
@@ -27,6 +27,7 @@
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
     "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
     "tquinlan92-typescript-redux-utils": "^1.2.0",
     "typescript": "3.1.6"
   },

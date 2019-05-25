@@ -11,7 +11,9 @@ export interface WithStyles<Styles> {
 export function withStyles<Styles = {}>(styles: Styles) {
     const { classes } = jss.createStyleSheet(styles).attach()
     return function <OtherProps = {}>(Component: React.FC<WithStyles<Styles> & OtherProps>) {
-        return (props: any) => (<Component classes={classes} {...props} />);
+        return (props: any): React.ReactElement => {
+            return <Component classes={classes} {...props} />;
+        };
     }
 }
 

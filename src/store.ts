@@ -33,7 +33,7 @@ const thunkActions = {
 };
 
 
-export const { actions: storeActions, reducers } = makeNestedSimpleStore(initialStates, thunkActions);
+export const { actions: storeActions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
 
 const appReducer = combineReducers(reducers);
 

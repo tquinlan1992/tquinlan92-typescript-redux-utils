@@ -88,18 +88,28 @@ function makeNestedSimpleReducerSimpleActions(state) {
     });
     var reducers = lodash_1.mapValues(actionsReducers, 'reducer');
     var actions = getActions(actionsReducers);
+    var selectors = lodash_1.mapValues(state, function (stateDepth1, stateDepth1Key) {
+        return lodash_1.mapValues(stateDepth1, function (stateDepth2Value, stateDepth2Key) {
+            return function (selectorState) {
+                console.log("state." + stateDepth1Key + "." + stateDepth2Key);
+                return selectorState[stateDepth1Key][stateDepth2Key];
+            };
+        });
+    });
     return {
         actions: actions,
-        reducers: reducers
+        reducers: reducers,
+        selectors: selectors
     };
 }
 exports.makeNestedSimpleReducerSimpleActions = makeNestedSimpleReducerSimpleActions;
 function makeNestedSimpleStore(state, thunkActions) {
-    var _a = makeNestedSimpleReducerSimpleActions(state), actions1 = _a.actions, reducers2 = _a.reducers;
-    var actionsWithThunks = lodash_1.merge(actions1, thunkActions);
+    var _a = makeNestedSimpleReducerSimpleActions(state), simpleActions = _a.actions, reducers = _a.reducers, selectors = _a.selectors;
+    var actionsWithThunks = lodash_1.merge(simpleActions, thunkActions);
     return {
         actions: actionsWithThunks,
-        reducers: reducers2
+        reducers: reducers,
+        selectors: selectors
     };
 }
 exports.makeNestedSimpleStore = makeNestedSimpleStore;

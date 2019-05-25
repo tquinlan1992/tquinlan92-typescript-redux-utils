@@ -10,7 +10,7 @@ export interface ActionCreatorWithReducer<StateType> {
 export interface ActionCreatorWithReducerGroup<StateType> {
     [key: string]: ActionCreatorWithReducer<StateType>;
 }
- 
+
 export function createReducer<StateType>(initialState: StateType, actions: ActionCreatorWithReducerGroup<StateType>) {
     return (state: StateType = initialState, incomingAction: Action<AnyAction>): StateType => {
         const actionMatch = find(actions, action => {
@@ -93,17 +93,17 @@ export function makeSimpleReducer<State extends {}>(reducerName: string, initial
             `UPDATE_${(key as string).toUpperCase()}`,
             (state, newValue) => {
                 return assign({}, state,
-                    {[key]: newValue}
+                    { [key]: newValue }
                 );
             }
         );
         return creatorReducer(reducerName) as any;
     }) as any) as {
-        [P in keyof State]: {
-            actionCreator: ActionCreator<State[P]>;
-            reducer: StateTypeReducer<State, State[P]>;
-        }
-    };
+            [P in keyof State]: {
+                actionCreator: ActionCreator<State[P]>;
+                reducer: StateTypeReducer<State, State[P]>;
+            }
+        };
     const resetActionCreatorReducer = makeActionCreatorWithReducerWithPrefix<State, null>(
         `RESET`,
         () => {
@@ -120,24 +120,24 @@ export function makeSimpleReducer<State extends {}>(reducerName: string, initial
     const set = makeActionCreatorWithReducerWithPrefix<State, Partial<State>>(
         `SET`,
         (state, newStateValues) => {
-            return assign({}, 
+            return assign({},
                 state,
                 newStateValues
             );
         }
     )(reducerName);
     return {
-        actions: assign({}, 
-            getCreators(assign({}, actions, {setAll, set})),
+        actions: assign({},
+            getCreators(assign({}, actions, { setAll, set })),
             { reset }
         ),
-        reducer: createReducer<State>(initialState, assign({}, actions, {resetActionCreatorReducer, setAll, set})),
+        reducer: createReducer<State>(initialState, assign({}, actions, { resetActionCreatorReducer, setAll, set })),
     };
 }
 
-export function getActions<T extends { [key: string]: {actions?: Dictionary<any>} }>(creators: T): { [P in keyof T]: T[P]['actions'] } {
+export function getActions<T extends { [key: string]: { actions?: Dictionary<any> } }>(creators: T): { [P in keyof T]: T[P]['actions'] } {
     return mapValues(creators, "actions") as { [P in keyof T]: T[P]['actions'] };
-} 
+}
 
 export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
     const actionsReducers = mapValues(state, (value, key) => {
@@ -145,37 +145,51 @@ export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
     });//{ [P in keyof T]: T[P]['actionCreator'] 
     const reducers = mapValues(actionsReducers, 'reducer');
     const actions = getActions(actionsReducers);
-
+    const selectors = mapValues(state, (stateDepth1, stateDepth1Key) => {
+        return mapValues(stateDepth1, (stateDepth2Value, stateDepth2Key) => {
+            return (selectorState: AppState) => {
+                console.log(`state.${stateDepth1Key}.${stateDepth2Key}`)
+                return (selectorState as any)[stateDepth1Key][stateDepth2Key];
+            }
+        });
+    })
     return ({
         actions,
-        reducers
+        reducers,
+        selectors
     } as any) as {
-        reducers: {
-            [P in keyof AppState]: Reducer<AppState[P], AnyAction>
+            reducers: {
+                [P in keyof AppState]: Reducer<AppState[P], AnyAction>
+            };
+            actions: {
+                [P in keyof AppState]: {
+                    [A in keyof AppState[P]]: ActionCreator<AppState[P][A]>
+                } & {
+                    reset: () => {
+                        type: string;
+                        match: (action: AnyAction) => action is Action<undefined>;
+                        (payload: undefined, meta?: Meta): Action<undefined>;
+                    };
+                    setAll: ActionCreator<AppState[P]>;
+                    set: ActionCreator<Partial<AppState[P]>>;
+                } & {
+                    [A in keyof AppState[P]]: AppState[P][A]
+                }
+            };
+            selectors: {
+                [P in keyof AppState]: {
+                    [A in keyof AppState[P]]: (state: AppState) => AppState[P][A];
+                }
+            };
         };
-        actions: {
-            [P in keyof AppState]: {
-                [A in keyof AppState[P]]: ActionCreator<AppState[P][A]>
-            } & {
-                reset: () =>  {
-                    type: string;
-                    match: (action: AnyAction) => action is Action<undefined>;
-                    (payload: undefined, meta?: Meta): Action<undefined>;
-                };
-                setAll: ActionCreator<AppState[P]>;
-                set: ActionCreator<Partial<AppState[P]>>;
-            } & {
-                [A in keyof AppState[P]]: AppState[P][A]
-            }
-        };
-    };
 }
 
 export function makeNestedSimpleStore<State, ThunkActions>(state: State, thunkActions?: ThunkActions) {
-    const { actions: actions1, reducers: reducers2 } = makeNestedSimpleReducerSimpleActions<State>(state);
-    const actionsWithThunks = merge(actions1, thunkActions);
+    const { actions: simpleActions, reducers, selectors } = makeNestedSimpleReducerSimpleActions<State>(state);
+    const actionsWithThunks = merge(simpleActions, thunkActions);
     return {
         actions: actionsWithThunks,
-        reducers: reducers2
+        reducers,
+        selectors
     };
 }
