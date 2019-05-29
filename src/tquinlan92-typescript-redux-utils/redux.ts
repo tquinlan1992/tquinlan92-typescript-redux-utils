@@ -36,6 +36,13 @@ export function makeActionCreatorWithReducer<StateType, ActionParams>(name: stri
     };
 }
 
+
+export function getActionCreator<AppState>() {
+        return <ActionParams>(name: string, reducer: StateTypeReducer<AppState, ActionParams>) => {
+            return makeActionCreatorWithReducer(name, reducer);
+        }
+}
+
 export function getCreators<T extends { [key: string]: ActionCreatorWithReducer<any> }>(creators: T): { [P in keyof T]: T[P]['actionCreator'] } {
     return mapValues(creators, "actionCreator") as { [P in keyof T]: T[P]['actionCreator'] };
 }
@@ -152,7 +159,11 @@ export function getActions<T extends { [key: string]: { actions?: Dictionary<any
 type AppStateWithActions<InitialState extends { [key: string]: any }> = {
     [A in keyof InitialState]: {
         actions: {
-            [P in keyof InitialState[A]['actions']]: ActionCreatorWithReducer<Omit<InitialState[A], 'actions'>>;
+            // [P in keyof InitialState[A]['actions']]: ActionCreatorWithReducer<Omit<InitialState[A], 'actions'>>;
+            [P in keyof InitialState[A]['actions']]: {
+                actionCreator: ActionCreator<any>;
+                reducer: StateTypeReducer<Omit<InitialState[A], 'actions'>, any>;
+            }
         }
     }
 } 

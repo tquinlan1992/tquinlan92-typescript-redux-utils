@@ -1,6 +1,11 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedSimpleStore, createConnectedProps, makeActionCreatorWithReducer } from './tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, createConnectedProps, getActionCreator } from './tquinlan92-typescript-redux-utils';
+import { createLogger } from 'redux-logger';
+
+const logger = createLogger({
+  // ...options
+});
 
 const state1NoActions = {
     input: '',
@@ -9,15 +14,17 @@ const state1NoActions = {
 
 type State1 = typeof state1NoActions;
 
+const state1ActionCreator = getActionCreator<State1>();
+
 const state1 = {
     input: '',
     results: [] as string[],
     actions: {
-        firstOtherAction: makeActionCreatorWithReducer<State1, {value: Number}>('firstOtherAction', (state, {value}) => {
+        firstOtherAction: state1ActionCreator<{value: Number;}>('nextOne', (state, {value}) => {
             return {
                 ...state,
                 input: String(value)
-            }
+            };
         })
     }
 };
@@ -46,6 +53,8 @@ export const { actions: storeActions, reducers, selectors } = makeNestedSimpleSt
 
 const appReducer = combineReducers(reducers);
 
-export const reduxStore = createStore(appReducer, applyMiddleware(thunk));
+export const reduxStore = createStore(appReducer, applyMiddleware(thunk, logger));
+
+reduxStore.dispatch(storeActions.state1.firstOtherAction({value: 4}));
 
 export const { connectedWithOwnProps, connectedNoOwnProps } = createConnectedProps<AppState>();
