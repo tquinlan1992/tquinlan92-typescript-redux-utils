@@ -1,4 +1,4 @@
-import { find, mapValues, assign, Dictionary, merge, omit, pick } from 'lodash';
+import { find, mapValues, assign, Dictionary, merge, omit, pick, Omit } from 'lodash';
 import actionCreatorFactory, { isType, Action, AnyAction, ActionCreator, Meta } from "typescript-fsa";
 import { Reducer } from 'redux';
 
@@ -87,7 +87,11 @@ type Partial<T> = {
     [P in keyof T]?: T[P];
 };
 
-export function makeSimpleReducer<State extends {}>(reducerName: string, initialState: State) {
+type OtherActions<State> = {
+    [P in keyof State]?: ActionCreatorWithReducer<State>;
+};
+
+export function makeSimpleReducer<State extends {}>(reducerName: string, initialState: State, otherActions?: OtherActions<State>) {
     const actions = (mapValues(initialState, (propertyFromState, key: keyof State) => {
         const creatorReducer = makeActionCreatorWithReducerWithPrefix<State, State[typeof key]>(
             `UPDATE_${(key as string).toUpperCase()}`,
@@ -104,44 +108,40 @@ export function makeSimpleReducer<State extends {}>(reducerName: string, initial
                 reducer: StateTypeReducer<State, State[P]>;
             }
         };
-    const reset = makeActionCreatorWithReducerWithPrefix<State, keyof State[]>(
-        `RESET`,
+
+    const reset = makeActionCreatorWithReducer<State, keyof State[]>(`${reducerName} - RESET`,
         (state, keysToReset) => {
-            console.log('here');
             return assign({},
                 state,
                 pick(initialState, keysToReset)
             );
         }
-    )(reducerName);
-    const resetAllActionCreatorReducer = makeActionCreatorWithReducerWithPrefix<State, null>(
-        `RESET_All`,
+    );
+    const resetAllActionCreatorReducer = makeActionCreatorWithReducer<State, null>(`${reducerName} - RESET_All`,
         () => {
             return initialState;
         }
-    )(reducerName);
+    );
     const resetAll = () => resetAllActionCreatorReducer.actionCreator(null);
-    const setAll = makeActionCreatorWithReducerWithPrefix<State, State>(
-        `SET_ALL`,
+    const setAll = makeActionCreatorWithReducer<State, State>(`${reducerName} - SET_ALL`,
         (state, newValue) => {
             return newValue;
         }
-    )(reducerName);
-    const set = makeActionCreatorWithReducerWithPrefix<State, Partial<State>>(
-        `SET`,
+    );
+    const set = makeActionCreatorWithReducer<State, Partial<State>>(`${reducerName} - SET`,
         (state, newStateValues) => {
             return assign({},
                 state,
                 newStateValues
             );
         }
-    )(reducerName);
+    );
     return {
         actions: assign({},
-            getCreators(assign({}, actions, { setAll, set, reset })),
+            getCreators(assign({}, actions, { setAll, set, reset }, otherActions)),
             { resetAll }
         ),
-        reducer: createReducer<State>(initialState, assign({}, actions, { resetAllActionCreatorReducer, setAll, set, reset })),
+        reducer: createReducer<State>(initialState, assign({}, actions, { resetAllActionCreatorReducer, setAll, set, reset }, otherActions)),
     };
 }
 
@@ -149,10 +149,18 @@ export function getActions<T extends { [key: string]: { actions?: Dictionary<any
     return mapValues(creators, "actions") as { [P in keyof T]: T[P]['actions'] };
 }
 
-export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
+type AppStateWithActions<InitialState extends { [key: string]: any }> = {
+    [A in keyof InitialState]: {
+        actions: {
+            [P in keyof InitialState[A]['actions']]: ActionCreatorWithReducer<Omit<InitialState[A], 'actions'>>;
+        }
+    }
+} 
+
+export function makeNestedSimpleReducerSimpleActions<AppState extends AppStateWithActions<AppState>>(state: any) {
     const actionsReducers = mapValues(state, (value, key) => {
-        return makeSimpleReducer(key, omit(value, 'actions'));
-    });//{ [P in keyof T]: T[P]['actionCreator'] 
+        return makeSimpleReducer(key, omit(value, 'actions'), value.actions);
+    });
     const reducers = mapValues(actionsReducers, 'reducer');
     const actions = getActions(actionsReducers);
     const selectors = mapValues(state, (stateDepth1, stateDepth1Key) => {
@@ -173,7 +181,7 @@ export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
             };
             actions: {
                 [P in keyof AppState]: {
-                    [A in keyof AppState[P]]: ActionCreator<AppState[P][A]>
+                    [A in keyof Omit<AppState[P], 'actions'>]: ActionCreator<AppState[P][A]>
                 } & {
                     reset: ActionCreator<Array<keyof AppState[P]>>;
                     resetAll: () => {
@@ -184,7 +192,7 @@ export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
                     setAll: ActionCreator<AppState[P]>;
                     set: ActionCreator<Partial<AppState[P]>>;
                 } & {
-                    [A in keyof AppState[P]]: AppState[P][A]
+                    [A in keyof AppState[P]['actions']]:  AppState[P]['actions'][A]['actionCreator']
                 }
             };
             selectors: {
@@ -195,7 +203,7 @@ export function makeNestedSimpleReducerSimpleActions<AppState>(state: any) {
         };
 }
 
-export function makeNestedSimpleStore<State, ThunkActions>(state: State, thunkActions?: ThunkActions) {
+export function makeNestedSimpleStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions) {
     const { actions: simpleActions, reducers, selectors } = makeNestedSimpleReducerSimpleActions<State>(state);
     const actionsWithThunks = merge(simpleActions, thunkActions);
     return {

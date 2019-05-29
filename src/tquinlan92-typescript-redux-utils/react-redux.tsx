@@ -26,7 +26,7 @@ function createConnectedComponent<AppState, OwnProps = {}>() {
             mapDispatchToProps: MapDispatchToProps = {} as any,
             styles: Styles = {} as any
         ) {
-        return (Component: React.FC<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<typeof styles>>>) => {
+        return (Component: React.FC<ReturnType<MapStateToProps> & MapDispatchToProps & WithStyles<typeof styles>>) => {
             const StyledComponent = withStyles(styles)(Component);
             return {
                 Component,

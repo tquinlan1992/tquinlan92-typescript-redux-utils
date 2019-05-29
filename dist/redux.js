@@ -54,7 +54,7 @@ function testRunner(reducer) {
     };
 }
 exports.testRunner = testRunner;
-function makeSimpleReducer(reducerName, initialState) {
+function makeSimpleReducer(reducerName, initialState, otherActions) {
     var actions = lodash_1.mapValues(initialState, function (propertyFromState, key) {
         var creatorReducer = makeActionCreatorWithReducerWithPrefix("UPDATE_" + key.toUpperCase(), function (state, newValue) {
             var _a;
@@ -62,23 +62,22 @@ function makeSimpleReducer(reducerName, initialState) {
         });
         return creatorReducer(reducerName);
     });
-    var reset = makeActionCreatorWithReducerWithPrefix("RESET", function (state, keysToReset) {
-        console.log('here');
+    var reset = makeActionCreatorWithReducer(reducerName + " - RESET", function (state, keysToReset) {
         return lodash_1.assign({}, state, lodash_1.pick(initialState, keysToReset));
-    })(reducerName);
-    var resetAllActionCreatorReducer = makeActionCreatorWithReducerWithPrefix("RESET_All", function () {
+    });
+    var resetAllActionCreatorReducer = makeActionCreatorWithReducer(reducerName + " - RESET_All", function () {
         return initialState;
-    })(reducerName);
+    });
     var resetAll = function () { return resetAllActionCreatorReducer.actionCreator(null); };
-    var setAll = makeActionCreatorWithReducerWithPrefix("SET_ALL", function (state, newValue) {
+    var setAll = makeActionCreatorWithReducer(reducerName + " - SET_ALL", function (state, newValue) {
         return newValue;
-    })(reducerName);
-    var set = makeActionCreatorWithReducerWithPrefix("SET", function (state, newStateValues) {
+    });
+    var set = makeActionCreatorWithReducer(reducerName + " - SET", function (state, newStateValues) {
         return lodash_1.assign({}, state, newStateValues);
-    })(reducerName);
+    });
     return {
-        actions: lodash_1.assign({}, getCreators(lodash_1.assign({}, actions, { setAll: setAll, set: set, reset: reset })), { resetAll: resetAll }),
-        reducer: createReducer(initialState, lodash_1.assign({}, actions, { resetAllActionCreatorReducer: resetAllActionCreatorReducer, setAll: setAll, set: set, reset: reset })),
+        actions: lodash_1.assign({}, getCreators(lodash_1.assign({}, actions, { setAll: setAll, set: set, reset: reset }, otherActions)), { resetAll: resetAll }),
+        reducer: createReducer(initialState, lodash_1.assign({}, actions, { resetAllActionCreatorReducer: resetAllActionCreatorReducer, setAll: setAll, set: set, reset: reset }, otherActions)),
     };
 }
 exports.makeSimpleReducer = makeSimpleReducer;
@@ -88,7 +87,7 @@ function getActions(creators) {
 exports.getActions = getActions;
 function makeNestedSimpleReducerSimpleActions(state) {
     var actionsReducers = lodash_1.mapValues(state, function (value, key) {
-        return makeSimpleReducer(key, lodash_1.omit(value, 'actions'));
+        return makeSimpleReducer(key, lodash_1.omit(value, 'actions'), value.actions);
     });
     var reducers = lodash_1.mapValues(actionsReducers, 'reducer');
     var actions = getActions(actionsReducers);

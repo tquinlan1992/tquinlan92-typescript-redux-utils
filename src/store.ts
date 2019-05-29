@@ -1,19 +1,29 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedSimpleStore, createConnectedProps } from './tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, createConnectedProps, makeActionCreatorWithReducer } from './tquinlan92-typescript-redux-utils';
 
-interface State1 {
-    input: string;
-    results: string[];
+const state1NoActions = {
+    input: '',
+    results: [] as string[]
 }
 
-const state1: State1 = {
+type State1 = typeof state1NoActions;
+
+const state1 = {
     input: '',
-    results: []
+    results: [] as string[],
+    actions: {
+        firstOtherAction: makeActionCreatorWithReducer<State1, {value: Number}>('firstOtherAction', (state, {value}) => {
+            return {
+                ...state,
+                input: String(value)
+            }
+        })
+    }
 };
 
 const initialStates = {
-    state1,
+    state1
 };
 
 export type AppState = typeof initialStates;
@@ -31,7 +41,6 @@ const state1ThunkActions = {
 const thunkActions = {
     state1: state1ThunkActions
 };
-
 
 export const { actions: storeActions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
 

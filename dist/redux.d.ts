@@ -58,7 +58,10 @@ export declare function testRunner<ReducerState>(reducer: Reducer): (initalState
 declare type Partial<T> = {
     [P in keyof T]?: T[P];
 };
-export declare function makeSimpleReducer<State extends {}>(reducerName: string, initialState: State): {
+declare type OtherActions<State> = {
+    [P in keyof State]?: ActionCreatorWithReducer<State>;
+};
+export declare function makeSimpleReducer<State extends {}>(reducerName: string, initialState: State, otherActions?: OtherActions<State>): {
     actions: { [P in keyof ({ [P in keyof State]: {
         actionCreator: ActionCreator<State[P]>;
         reducer: StateTypeReducer<State, State[P]>;
@@ -72,10 +75,10 @@ export declare function makeSimpleReducer<State extends {}>(reducerName: string,
             reducer: StateTypeReducer<State, Partial<State>>;
         };
         reset: {
-            actionCreator: ActionCreator<"fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
-            reducer: StateTypeReducer<State, "fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
+            actionCreator: ActionCreator<"reverse" | "map" | "filter" | "forEach" | "length" | "toString" | "toLocaleString" | "concat" | "join" | "slice" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "entries" | "keys" | "values" | "includes" | "pop" | "push" | "shift" | "sort" | "splice" | "unshift" | "fill" | "copyWithin">;
+            reducer: StateTypeReducer<State, "reverse" | "map" | "filter" | "forEach" | "length" | "toString" | "toLocaleString" | "concat" | "join" | "slice" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "entries" | "keys" | "values" | "includes" | "pop" | "push" | "shift" | "sort" | "splice" | "unshift" | "fill" | "copyWithin">;
         };
-    })]: ({ [P in keyof State]: {
+    } & OtherActions<State>)]: ({ [P in keyof State]: {
         actionCreator: ActionCreator<State[P]>;
         reducer: StateTypeReducer<State, State[P]>;
     }; } & {
@@ -88,10 +91,10 @@ export declare function makeSimpleReducer<State extends {}>(reducerName: string,
             reducer: StateTypeReducer<State, Partial<State>>;
         };
         reset: {
-            actionCreator: ActionCreator<"fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
-            reducer: StateTypeReducer<State, "fill" | "filter" | "length" | "reverse" | "map" | "forEach" | "toString" | "toLocaleString" | "pop" | "push" | "concat" | "join" | "shift" | "slice" | "sort" | "splice" | "unshift" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "copyWithin" | "entries" | "keys" | "values" | "includes">;
+            actionCreator: ActionCreator<"reverse" | "map" | "filter" | "forEach" | "length" | "toString" | "toLocaleString" | "concat" | "join" | "slice" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "entries" | "keys" | "values" | "includes" | "pop" | "push" | "shift" | "sort" | "splice" | "unshift" | "fill" | "copyWithin">;
+            reducer: StateTypeReducer<State, "reverse" | "map" | "filter" | "forEach" | "length" | "toString" | "toLocaleString" | "concat" | "join" | "slice" | "indexOf" | "lastIndexOf" | "every" | "some" | "reduce" | "reduceRight" | "find" | "findIndex" | "entries" | "keys" | "values" | "includes" | "pop" | "push" | "shift" | "sort" | "splice" | "unshift" | "fill" | "copyWithin">;
         };
-    })[P]["actionCreator"]; } & {
+    } & OtherActions<State>)[P]["actionCreator"]; } & {
         resetAll: () => Action<null>;
     };
     reducer: (state: State | undefined, incomingAction: Action<AnyAction>) => State;
@@ -103,9 +106,18 @@ export declare function getActions<T extends {
 }>(creators: T): {
     [P in keyof T]: T[P]['actions'];
 };
-export declare function makeNestedSimpleReducerSimpleActions<AppState>(state: any): {
+declare type AppStateWithActions<InitialState extends {
+    [key: string]: any;
+}> = {
+    [A in keyof InitialState]: {
+        actions: {
+            [P in keyof InitialState[A]['actions']]: ActionCreatorWithReducer<InitialState[A]['actions']>;
+        };
+    };
+};
+export declare function makeNestedSimpleReducerSimpleActions<AppState extends AppStateWithActions<AppState>>(state: any): {
     reducers: { [P in keyof AppState]: Reducer<AppState[P], AnyAction>; };
-    actions: { [P in keyof AppState]: { [A in keyof AppState[P]]: ActionCreator<AppState[P][A]>; } & {
+    actions: { [P in keyof AppState]: { [A in keyof Pick<AppState[P], Exclude<keyof AppState[P], "actions">>]: ActionCreator<AppState[P][A]>; } & {
         reset: ActionCreator<(keyof AppState[P])[]>;
         resetAll: () => {
             (payload: undefined, meta?: {
@@ -116,11 +128,11 @@ export declare function makeNestedSimpleReducerSimpleActions<AppState>(state: an
         };
         setAll: ActionCreator<AppState[P]>;
         set: ActionCreator<Partial<AppState[P]>>;
-    } & { [A in keyof AppState[P]]: AppState[P][A]; }; };
+    } & { [A in keyof AppState[P]["actions"]]: AppState[P]["actions"][A]["actionCreator"]; }; };
     selectors: { [P in keyof AppState]: { [A in keyof AppState[P]]: (state: AppState) => AppState[P][A]; }; };
 };
-export declare function makeNestedSimpleStore<State, ThunkActions>(state: State, thunkActions?: ThunkActions): {
-    actions: { [P in keyof State]: { [A in keyof State[P]]: ActionCreator<State[P][A]>; } & {
+export declare function makeNestedSimpleStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions): {
+    actions: { [P in keyof State]: { [A in keyof Pick<State[P], Exclude<keyof State[P], "actions">>]: ActionCreator<State[P][A]>; } & {
         reset: ActionCreator<(keyof State[P])[]>;
         resetAll: () => {
             (payload: undefined, meta?: {
@@ -131,7 +143,7 @@ export declare function makeNestedSimpleStore<State, ThunkActions>(state: State,
         };
         setAll: ActionCreator<State[P]>;
         set: ActionCreator<Partial<State[P]>>;
-    } & { [A in keyof State[P]]: State[P][A]; }; } & ThunkActions;
+    } & { [A in keyof State[P]["actions"]]: State[P]["actions"][A]["actionCreator"]; }; } & ThunkActions;
     reducers: { [P in keyof State]: Reducer<State[P], AnyAction>; };
     selectors: { [P in keyof State]: { [A in keyof State[P]]: (state: State) => State[P][A]; }; };
 };
