@@ -38,9 +38,9 @@ export function makeActionCreatorWithReducer<StateType, ActionParams>(name: stri
 
 
 export function getActionCreator<AppState>() {
-        return <ActionParams>(name: string, reducer: StateTypeReducer<AppState, ActionParams>) => {
-            return makeActionCreatorWithReducer(name, reducer);
-        }
+    return <ActionParams>(reducer: StateTypeReducer<AppState, ActionParams>) => {
+        return (name: string) => makeActionCreatorWithReducer(name, reducer);
+    }
 }
 
 export function getCreators<T extends { [key: string]: ActionCreatorWithReducer<any> }>(creators: T): { [P in keyof T]: T[P]['actionCreator'] } {
@@ -159,14 +159,16 @@ export function getActions<T extends { [key: string]: { actions?: Dictionary<any
 type AppStateWithActions<InitialState extends { [key: string]: any }> = {
     [A in keyof InitialState]: {
         actions: {
-            // [P in keyof InitialState[A]['actions']]: ActionCreatorWithReducer<Omit<InitialState[A], 'actions'>>;
-            [P in keyof InitialState[A]['actions']]: {
-                actionCreator: ActionCreator<any>;
-                reducer: StateTypeReducer<Omit<InitialState[A], 'actions'>, any>;
-            }
+            // [P in keyof InitialState[A]['actions']]: {
+            //     actionCreator: ActionCreator<any>;
+            //     reducer: StateTypeReducer<Omit<InitialState[A], 'actions'>, any>;
+            // }
+            [P in keyof InitialState[A]['actions']]:
+            (state: Omit<InitialState[A], 'actions'>, actionParams: any) =>
+                Omit<InitialState[A], 'actions'>
         }
     }
-} 
+}
 
 export function makeNestedSimpleReducerSimpleActions<AppState extends AppStateWithActions<AppState>>(state: any) {
     const actionsReducers = mapValues(state, (value, key) => {
@@ -187,31 +189,31 @@ export function makeNestedSimpleReducerSimpleActions<AppState extends AppStateWi
         reducers,
         selectors
     } as any) as {
-            reducers: {
-                [P in keyof AppState]: Reducer<AppState[P], AnyAction>
-            };
-            actions: {
-                [P in keyof AppState]: {
-                    [A in keyof Omit<AppState[P], 'actions'>]: ActionCreator<AppState[P][A]>
-                } & {
-                    reset: ActionCreator<Array<keyof AppState[P]>>;
-                    resetAll: () => {
-                        type: string;
-                        match: (action: AnyAction) => action is Action<undefined>;
-                        (payload: undefined, meta?: Meta): Action<undefined>;
-                    };
-                    setAll: ActionCreator<AppState[P]>;
-                    set: ActionCreator<Partial<AppState[P]>>;
-                } & {
-                    [A in keyof AppState[P]['actions']]:  AppState[P]['actions'][A]['actionCreator']
-                }
-            };
-            selectors: {
-                [P in keyof AppState]: {
-                    [A in keyof AppState[P]]: (state: AppState) => AppState[P][A];
-                }
-            };
+        reducers: {
+            [P in keyof AppState]: Reducer<AppState[P], AnyAction>
         };
+        actions: {
+            [P in keyof AppState]: {
+                [A in keyof Omit<AppState[P], 'actions'>]: ActionCreator<AppState[P][A]>
+            } & {
+                reset: ActionCreator<Array<keyof AppState[P]>>;
+                resetAll: () => {
+                    type: string;
+                    match: (action: AnyAction) => action is Action<undefined>;
+                    (payload: undefined, meta?: Meta): Action<undefined>;
+                };
+                setAll: ActionCreator<AppState[P]>;
+                set: ActionCreator<Partial<AppState[P]>>;
+            } & {
+                [A in keyof AppState[P]['actions']]: ActionCreator<Parameters<AppState[P]['actions'][A]>[1]>
+            }
+        };
+        selectors: {
+            [P in keyof AppState]: {
+                [A in keyof AppState[P]]: (state: AppState) => AppState[P][A];
+            }
+        };
+    };
 }
 
 export function makeNestedSimpleStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions) {

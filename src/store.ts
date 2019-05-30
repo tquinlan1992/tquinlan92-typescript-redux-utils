@@ -1,11 +1,9 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedSimpleStore, createConnectedProps, getActionCreator } from './tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, createConnectedProps } from './tquinlan92-typescript-redux-utils';
 import { createLogger } from 'redux-logger';
 
-const logger = createLogger({
-  // ...options
-});
+const logger = createLogger();
 
 const state1NoActions = {
     input: '',
@@ -14,18 +12,16 @@ const state1NoActions = {
 
 type State1 = typeof state1NoActions;
 
-const state1ActionCreator = getActionCreator<State1>();
-
 const state1 = {
     input: '',
     results: [] as string[],
     actions: {
-        firstOtherAction: state1ActionCreator<{value: Number;}>('nextOne', (state, {value}) => {
+        firstOtherAction: (state: State1, {value}: {value: number}) => {
             return {
                 ...state,
                 input: String(value)
             };
-        })
+        }
     }
 };
 
@@ -54,6 +50,8 @@ export const { actions: storeActions, reducers, selectors } = makeNestedSimpleSt
 const appReducer = combineReducers(reducers);
 
 export const reduxStore = createStore(appReducer, applyMiddleware(thunk, logger));
+
+console.log('storeActions.state1.firstOtherAction', storeActions.state1.firstOtherAction);
 
 reduxStore.dispatch(storeActions.state1.firstOtherAction({value: 4}));
 
