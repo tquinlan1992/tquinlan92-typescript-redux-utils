@@ -25,6 +25,7 @@
     "@types/react-dom": "16.8.4",
     "@types/react-redux": "^7.0.9",
     "@types/redux-logger": "^3.0.7",
+    "copyfiles": "^2.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
@@ -39,7 +40,7 @@
     "build": "react-scripts build",
     "test": "react-scripts --inspect-brk test",
     "eject": "react-scripts eject",
-    "build-npm": "tsc -p ./src/tquinlan92-typescript-redux-utils"
+    "build-npm": "copyfiles -u 2 -e ./src/tquinlan92-typescript-redux-utils/**/*.test.ts ./src/tquinlan92-typescript-redux-utils/**/* dist"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -51,6 +51,9 @@ const thunkActions = {
 
 export const { actions: storeActions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
 
+export const t = selectors.state1.input
+
+
 const appReducer = combineReducers(reducers);
 
 export const reduxStore = createStore(appReducer, applyMiddleware(thunk, logger));
