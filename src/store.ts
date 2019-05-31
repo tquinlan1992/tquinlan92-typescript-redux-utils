@@ -1,6 +1,6 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedSimpleStore, createConnectedProps, getActionCreatorWithImmer } from './tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, createConnectedProps, getActionCreatorWithImmer } from 'tquinlan92-typescript-redux-utils';
 import { createLogger } from 'redux-logger';
 
 const logger = createLogger({

@@ -1,7 +1,7 @@
 {
   "name": "tquinlan92-typescript-redux-utils",
   "author": "Tom Quinlan<tquinlan1992@gmail.com>",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/tquinlan1992/tquinlan92-typescript-redux-utils"
@@ -33,7 +33,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "tquinlan92-typescript-redux-utils": "^1.9.0",
+    "tquinlan92-typescript-redux-utils": "^1.9.1",
     "typescript": "^3.4.5"
   },
   "scripts": {
@@ -41,7 +41,9 @@
     "build": "react-scripts build",
     "test": "react-scripts --inspect-brk test",
     "eject": "react-scripts eject",
-    "build-npm": "copyfiles -u 2 -e ./src/tquinlan92-typescript-redux-utils/**/*.test.ts ./src/tquinlan92-typescript-redux-utils/**/* dist"
+    "copy-types": "copyfiles -u 2 -e ./src/tquinlan92-typescript-redux-utils/**/*.test.ts ./src/tquinlan92-typescript-redux-utils/**/*.d.ts dist",
+    "compile-npm": "tsc -p ./src/tquinlan92-typescript-redux-utils",
+    "build-npm": "npm run copy-types && npm run compile-npm"
   },
   "eslintConfig": {
     "extends": "react-app"
