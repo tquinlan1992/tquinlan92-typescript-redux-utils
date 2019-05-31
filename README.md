@@ -3,7 +3,7 @@
 This package gives a few useful type-safe redux, react-redux, and react utilities.
 
 ## `makeNestedSimpleStore`
-makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, `reset` to reset a state to its initial state, `resetAll` to reset the state whole to its initial state.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
+makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, `reset` to reset a state to its initial state, `resetAll` to reset the state whole to its initial state.  You can also pass in `otherActions` by definining a `actions` property on an `initial state`.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
 
 ```ts
 export const { actions: storeActions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
@@ -15,7 +15,7 @@ Also you can access a sandbox using it without typescript [here](https://codesan
 
 ```ts
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
-import { makeNestedSimpleStore } from 'tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, getActionCreatorWithImmer } from 'tquinlan92-typescript-redux-utils';
 import thunk, { ThunkAction } from 'redux-thunk';
 import { createSelector } from 'reselect';
 
@@ -24,9 +24,16 @@ interface State1 {
     results: string[];
 }
 
-const state1: State1 = {
+const state1ActionCreatorWithImmer = getActionCreatorWithImmer<State1>();
+
+const state1 = {
     input: '',
-    results: []
+    results: [] as string[],
+    actions: {
+        immerInput: state1ActionCreatorWithImmer<{value: string;}>('nextOne', (state, {value}) => {
+            state.input = value;
+        })
+    }
 };
 
 const initialStates = {
@@ -136,6 +143,45 @@ describe('dispatching state1 actions', () => {
         })
     });
 });
+```
+
+### `getActionCreatorWithImmer`
+`getActionCreatorWithImmer` returns back an action creator with the npm package [immer](https://www.npmjs.com/package/immer)
+
+```ts
+import { getActionCreatorWithImmer } from 'tquinlan92-typescript-redux-utils` 
+const state1ActionCreatorWithImmer = getActionCreatorWithImmer<State1>();
+
+const state1 = {
+    input: '',
+    results: [] as string[],
+    actions: {
+        immerInput: state1ActionCreatorWithImmer<{value: string;}>('nextOne', (state, {value}) => {
+            state.input = value;
+        })
+    }
+};
+```
+
+### `getActionCreator`
+`getActionCreatorWithImmer` returns back an action creator with the npm package [immer](https://www.npmjs.com/package/immer)
+
+```ts
+import { getActionCreator } from 'tquinlan92-typescript-redux-utils` 
+const state1ActionCreator = getActionCreator<State1>();
+
+const state1 = {
+    input: '',
+    results: [] as string[],
+    actions: {
+        immerInput: state1ActionCreator<{value: string;}>('nextOne', (state, {value}) => {
+            return {
+                ...state,
+                input: value
+            }
+        })
+    }
+};
 ```
 
 ## `createConnectedProps`
