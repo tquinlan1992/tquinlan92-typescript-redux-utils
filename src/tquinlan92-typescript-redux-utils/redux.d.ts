@@ -20,6 +20,11 @@ export declare function getActionCreator<AppState>(): <ActionParams>(name: strin
     actionCreator: ActionCreator<ActionParams>;
     reducer: StateTypeReducer<AppState, ActionParams>;
 };
+
+export declare function getActionCreatorWithImmer<AppState>(): <ActionParams>(name: string, reducer: (appState: AppState, actionParams: ActionParams) => undefined | void) => {
+    actionCreator: ActionCreator<ActionParams>;
+    reducer: StateTypeReducer<AppState, ActionParams>;
+};
 export declare function getCreators<T extends {
     [key: string]: ActionCreatorWithReducer<any>;
 }>(creators: T): {

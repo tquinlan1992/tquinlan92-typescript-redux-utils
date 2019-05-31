@@ -62,4 +62,16 @@ describe('dispatching state1 actions', () => {
             })
         })
     });
+    describe('when state1.immerInput is dispatched', () => {
+        it('should update input', () => {
+            reduxStore.dispatch(storeActions.state1.immerInput({value: 'immer'}));
+            const newState = reduxStore.getState();
+            expect(newState).toEqual({
+                state1: {
+                    input: 'immer',
+                    results: []
+                }
+            })
+        })
+    });
 });

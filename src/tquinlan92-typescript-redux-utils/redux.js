@@ -1,5 +1,6 @@
 import { find, mapValues, assign, merge, omit, pick } from 'lodash';
 import actionCreatorFactory, { isType } from "typescript-fsa";
+import produce from "immer";
 
 export function createReducer(initialState, actions) {
     return (state = initialState, incomingAction) => {
@@ -13,19 +14,33 @@ export function createReducer(initialState, actions) {
         }
     };
 }
-export function makeActionCreatorWithReducer(name, reducer) {
+export function makeActionCreatorWithReducer(name, reducer, withImmer) {
     const SimpleActionCreator = actionCreatorFactory();
     return {
         actionCreator: SimpleActionCreator(name),
-        reducer
+        reducer: (state, action) => {
+            if (withImmer) {
+                return produce(state, draft => {
+                    reducer(draft, action);
+                });
+            } else {
+                return reducer(state, action)
+            }
+        }
     };
 }
 
 
 export function getActionCreator() {
-        return (name, reducer) => {
-            return makeActionCreatorWithReducer(name, reducer);
-        }
+    return (name, reducer) => {
+        return makeActionCreatorWithReducer(name, reducer);
+    }
+}
+
+export function getActionCreatorWithImmer() {
+    return (name, reducer) => {
+        return makeActionCreatorWithReducer(name, reducer, true);
+    }
 }
 
 export function getCreators(creators) {

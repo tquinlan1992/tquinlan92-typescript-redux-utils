@@ -1,6 +1,6 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedSimpleStore, createConnectedProps, getActionCreator } from './tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, createConnectedProps, getActionCreatorWithImmer } from './tquinlan92-typescript-redux-utils';
 import { createLogger } from 'redux-logger';
 
 const logger = createLogger({
@@ -14,17 +14,14 @@ const state1NoActions = {
 
 type State1 = typeof state1NoActions;
 
-const state1ActionCreator = getActionCreator<State1>();
+const state1ActionCreatorWithImmer = getActionCreatorWithImmer<State1>();
 
 const state1 = {
     input: '',
     results: [] as string[],
     actions: {
-        firstOtherAction: state1ActionCreator<{value: Number;}>('nextOne', (state, {value}) => {
-            return {
-                ...state,
-                input: String(value)
-            };
+        immerInput: state1ActionCreatorWithImmer<{value: string;}>('nextOne', (state, {value}) => {
+            state.input = value;
         })
     }
 };
@@ -58,6 +55,6 @@ const appReducer = combineReducers(reducers);
 
 export const reduxStore = createStore(appReducer, applyMiddleware(thunk, logger));
 
-reduxStore.dispatch(storeActions.state1.firstOtherAction({value: 4}));
+reduxStore.dispatch(storeActions.state1.immerInput({value: '10'}));
 
 export const { connectedWithOwnProps, connectedNoOwnProps } = createConnectedProps<AppState>();
