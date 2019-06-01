@@ -12,14 +12,21 @@ export const initialStates = {
     state1
 };
 
-export const { actions: storeActions, reducers, selectors, initalState, reducer, store, Provider } = 
-makeNestedStore(initialStates, [thunk, logger]);
+export const {
+    actions: storeActions,
+    reducers, selectors,
+    initalState,
+    reducer,
+    store,
+    Provider
+} =
+    makeNestedStore(initialStates, [thunk, logger]);
 
 const thunkActions = {
     state1: state1ThunkActions
 };
 
-export const actions = merge(storeActions, thunkActions); 
+export const actions = merge(storeActions, thunkActions);
 
 export type AppState = typeof initalState;
 
