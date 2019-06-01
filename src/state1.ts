@@ -1,5 +1,4 @@
 import { mergeStateWithActions } from "./tquinlan92-typescript-redux-utils";
-import { getResults } from "./getResults";
 
 const state1NoActions = {
     input: '',
@@ -12,7 +11,3 @@ export const state1 = mergeStateWithActions(state1NoActions, {
         state.input = String(value);
     }
 });
-
-export const state1ThunkActions = {
-    getResults
-};

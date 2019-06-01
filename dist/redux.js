@@ -1,4 +1,4 @@
-import { find, mapValues, assign, merge, pick } from 'lodash';
+import { find, mapValues, assign, pick } from 'lodash';
 import actionCreatorFactory, { isType } from "typescript-fsa";
 import produce from "immer";
 import { combineReducers, createStore, applyMiddleware } from 'redux';
@@ -139,16 +139,15 @@ export function makeNestedSimpleReducerSimpleActions(state) {
     selectors
   };
 }
-export function makeNestedStore(state, thunkActions, middleware) {
+export function makeNestedStore(state, middleware) {
   const {
-    actions: simpleActions,
+    actions,
     reducers,
     selectors
   } = makeNestedSimpleReducerSimpleActions(state);
-  const actionsWithThunks = merge(simpleActions, thunkActions);
   const reducer = combineReducers(reducers);
   return {
-    actions: actionsWithThunks,
+    actions,
     reducers,
     selectors,
     initialState: state,

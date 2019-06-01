@@ -1,6 +1,7 @@
 import { Dictionary, Omit } from 'lodash';
 import { Action, AnyAction, ActionCreator } from "typescript-fsa";
 import { Reducer, Store, StateExt, Ext, Middleware } from 'redux';
+import { ThunkAction, AnyAction as ReduxAnyAction } from 'redux-thunk'
 
 export interface ActionCreatorWithReducer<StateType> {
     actionCreator: ActionCreator<any>;
@@ -142,6 +143,12 @@ export type ActionsForStateWithActions<State extends { actions: ActionsForState<
     [key: string]: any
 }
 
+export type ThunkActionsForState<AppState> = {
+    [key: string]: (any) => AppThunk<AppState>
+}
+
+export type AppThunk<AppState> = ThunkAction<void, AppState, void, ReduxAnyAction>;
+
 export type StateWithActions<State> = {
     actions: ActionsForState<Omit<State, 'actions'>>
 } & {
@@ -150,7 +157,7 @@ export type StateWithActions<State> = {
 
 export declare function mergeStateWithActions<State, Actions extends ActionsForState<State>>(state: State, actions: Actions): { state: State, actions: Actions };
 
-export declare function makeNestedStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions, middleware?: Middleware[]): {
+export declare function makeNestedStore<State extends AppStateWithActions<State>>(state: State, middleware?: Middleware[]): {
     actions: { [P in keyof State]: { [A in keyof State[P]['state']]: ActionCreator<State[P]['state'][A]>; } & {
         reset: ActionCreator<(keyof State[P]['state'])[]>;
         resetAll: () => {
@@ -162,7 +169,7 @@ export declare function makeNestedStore<State extends AppStateWithActions<State>
         };
         setAll: ActionCreator<State[P]['state']>;
         set: ActionCreator<Partial<State[P]['state']>>;
-    } & { [A in keyof State[P]["actions"]]:  ActionCreator<Parameters<State[P]["actions"][A]>[1]>; }; } & ThunkActions;
+    } & { [A in keyof State[P]["actions"]]:  ActionCreator<Parameters<State[P]["actions"][A]>[1]>; }; };
     reducers: { [P in keyof State]: Reducer<NestedStatePicked<State>, AnyAction>; };
     selectors: { [P in keyof State]: { [A in keyof State[P]['state']]: (state: NestedStatePick<State>) => State[P]['state'][A]; }; };
     initalState: NestedStatePick<State>,
