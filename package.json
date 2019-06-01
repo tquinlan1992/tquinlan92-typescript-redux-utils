@@ -37,7 +37,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "tquinlan92-typescript-redux-utils": "^1.9.1",
+    "tquinlan92-typescript-redux-utils": "^1.10.2",
     "typescript": "^3.4.5"
   },
   "scripts": {

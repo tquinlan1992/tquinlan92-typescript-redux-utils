@@ -16,6 +16,9 @@ const state1NoActions = {
 const state1 = mergeStateWithActions(state1NoActions, {
     immerInput: (state, {value}: {value: number}) => {
         state.input = String(value);
+    },
+    another: (state, {test}: {test: number}) => {
+
     }
 });
 
