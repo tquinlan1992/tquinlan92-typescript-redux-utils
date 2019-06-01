@@ -17,24 +17,18 @@ export function withStyles(styles) {
 }
 
 function createConnectedComponent() {
-  return function (mapStateToProps, mapDispatchToProps = {}, styles = {}) {
+  return function (mapStateToProps, mapDispatchToProps = {}) {
     return Component => {
-      const StyledComponent = withStyles(styles)(Component);
       return {
         Component,
         mapStateToProps,
         mapDispatchToProps,
-        Connected: connect(mapStateToProps, mapDispatchToProps)(StyledComponent)
+        Connected: connect(mapStateToProps, mapDispatchToProps)(Component)
       };
     };
   };
 }
 
-export function createConnectedProps() {
-  return {
-    connectedWithOwnProps: function withOwnProps() {
-      return createConnectedComponent();
-    },
-    connectedNoOwnProps: createConnectedComponent()
-  };
+export function createConnectProps() {
+  return createConnectedComponent();
 }

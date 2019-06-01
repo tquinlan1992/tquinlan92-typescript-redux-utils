@@ -2,8 +2,10 @@
 
 This package gives a few useful type-safe redux, react-redux, and react utilities.
 
-## `makeNestedSimpleStore`
-makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, `reset` to reset a state to its initial state, `resetAll` to reset the state whole to its initial state.  You can also pass in `otherActions` by definining a `actions` property on an `initial state`.  If a second argument is passed in it will merge the object with the `action`.  It's recommened to pass in thunk actions as the second argument matching the nested store type.
+## `makeNestedStore`
+makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  The `actions` include `simpleActions` to change the state with the same name as the state properties.  It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, `reset` to reset a state to its initial state, `resetAll` to reset the state whole to its initial state.  
+
+The second parameter takes `middleware` to apply to the store returned.
 
 ```ts
 export const { actions: actions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
@@ -15,32 +17,35 @@ Also you can access a sandbox using it without typescript [here](https://codesan
 
 ```ts
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
-import { makeNestedSimpleStore, getActionCreatorWithImmer } from 'tquinlan92-typescript-redux-utils';
+import {mergeStateWithActions, makeNestedStore } from 'tquinlan92-typescript-redux-utils';
 import thunk, { ThunkAction } from 'redux-thunk';
 import { createSelector } from 'reselect';
 
-interface State1 {
-    input: string;
-    results: string[];
-}
-
-const state1ActionCreatorWithImmer = getActionCreatorWithImmer<State1>();
-
-const state1 = {
-    input: '',
-    results: [] as string[],
-    actions: {
-        immerInput: state1ActionCreatorWithImmer<{value: string;}>('nextOne', (state, {value}) => {
+const state1 = mergeStateWithActions(
+    {
+        input: '',
+        results: [] as string[],
+    }, 
+    {
+        
+        immerInput: (state, {value}: {value: String}) => {
             state.input = value;
         })
     }
-};
+});
 
 const initialStates = {
     state1,
 };
 
-export type AppState = typeof initialStates;
+const state1ThunkActions = {
+    getResults
+};
+
+export const { actions: storeActions, reducers, selectors, initalState, reducer, store } = 
+makeNestedStore(initialStates, [thunk, logger]);
+
+export type AppState = typeof initalState;
 
 function getResults(): ThunkAction<void, AppState, void, AnyAction> {
     return async (dispatch) => {
@@ -48,23 +53,9 @@ function getResults(): ThunkAction<void, AppState, void, AnyAction> {
     };
 }
 
-const state1ThunkActions = {
-    getResults
-};
-
 const thunkActions = {
     state1: state1ThunkActions
 };
-
-/* thunkActions can be anything.  It's lodash.merged with the actions.  
-A good use case would be to use it with thunk actions.
-*/
-export const { actions: actions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
-
-// Create the redux store
-const appReducer = combineReducers(reducers);
-
-export const store = createStore(appReducer, applyMiddleware(thunk));
 
 // Create a Selector using a exported selectors
 function mapResults(results: string[]) {
@@ -145,118 +136,47 @@ describe('dispatching state1 actions', () => {
 });
 ```
 
-### `getActionCreatorWithImmer`
-`getActionCreatorWithImmer` returns back an action creator with the npm package [immer](https://www.npmjs.com/package/immer)
+### `mergeStateWithActions`
+`mergeStateWithActions` takes two parameters `intialState` and `otherActions`.  `otherActions` are reducers that will be typed to to the `initialState` passed and the second parameter to the reducer (the `action type`) will be typed for the `action creator` returned when used with `makeNestedStore`
 
 ```ts
-import { getActionCreatorWithImmer } from 'tquinlan92-typescript-redux-utils` 
-const state1ActionCreatorWithImmer = getActionCreatorWithImmer<State1>();
+import { mergeStateWithActions } from 'tquinlan92-typescript-redux-utils` 
 
-const state1 = {
-    input: '',
-    results: [] as string[],
-    actions: {
-        immerInput: state1ActionCreatorWithImmer<{value: string;}>('nextOne', (state, {value}) => {
+const state1 = mergeStateWithActions(
+    {
+        input: '',
+        results: [] as string[],
+    }, 
+    {
+        
+        immerInput: (state, {value}: {value: String}) => {
             state.input = value;
         })
     }
-};
+});
 ```
 
-### `getActionCreator`
-`getActionCreatorWithImmer` returns back an action creator with the npm package [immer](https://www.npmjs.com/package/immer)
+## `createConnectProps`
+createConnectProps takes a `AppState` as a generic type.  It returns back a method to `create connected props` using `mapStateToProps` and `mapDispatchToProps` as its two parameters.
 
 ```ts
-import { getActionCreator } from 'tquinlan92-typescript-redux-utils` 
-const state1ActionCreator = getActionCreator<State1>();
-
-const state1 = {
-    input: '',
-    results: [] as string[],
-    actions: {
-        immerInput: state1ActionCreator<{value: string;}>('nextOne', (state, {value}) => {
-            return {
-                ...state,
-                input: value
-            }
-        })
-    }
+function createConnectProps<AppState>(): <MapStateToProps extends (state: AppState, ownProps: any) => {}, MapDispatchToProps extends MapDispatchToPropsParam<{}, {}>>(mapStateToProps: MapStateToProps, mapDispatchToProps?: MapDispatchToProps) => (Component: React.FunctionComponent<ReturnType<MapStateToProps> & MapDispatchToProps>) => {
+    Component: React.FunctionComponent<ReturnType<MapStateToProps> & MapDispatchToProps & WithStyles<Styles>>;
+    mapStateToProps: MapStateToProps;
+    mapDispatchToProps: MapDispatchToProps;
+    Connected: import("react-redux").ConnectedComponentClass<(props: any) => React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<any, any, any>)>, Pick<any, never> & Parameters<MapStateToProps>[1]>;
 };
 ```
 
-## `createConnectedProps`
-createConnectedComponent takes a `AppState` as a generic type.  It returns back two methods `connectedWithOwnProps` and `connectedNoOwnProps` to create a connected component with optional JSS styles.
-
-### `connectedNoOwnProps`
-`connectedNoOwnProps` Is a method to create a connected component.  T
-
-### `connectedWithOwnProps`
-`connectedWithOwnProps` takes `OwnProps` as a generic type and returns back a method to create a connected compnent.  This method is the same as `connectedNoOwnProps` but with `OwnProps`.
-
-```ts
-function createConnectedProps<AppState>(): {
-    connectedWithOwnProps: <OwnProps>() => (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles) => (Component: React.FunctionComponent) => {
-        Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>;
-        mapStateToProps: MapStateToProps;
-        mapDispatchToProps: MapDispatchToProps;
-        Connected: import("react-redux").ConnectedComponentClass<OwnProps>;
-    };
-    connectedNoOwnProps: (mapStateToProps: MapStateToProps, mapDispatchToProps: MapDispatchToProps, styles: Styles) => (Component: React.FunctionComponent) => {
-        Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps & WithStyles<Styles>>>;
-        mapStateToProps: MapStateToProps;
-        mapDispatchToProps: MapDispatchToProps;
-        Connected: import("react-redux").ConnectedComponentClass;
-    };
-};
-```
-
-#### Usage of `connectedNoOwnProps`
+#### Usage of `connectProps`
 ```tsx
 import React from 'react';
 import { actions, createConnectedProps, AppState } from "./store";
 
-export const { connectedNoOwnProps } = createConnectedProps<AppState>();
+const connectProps = createConnectProps<AppState>();
 
-export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
-    state => {
-        const { input, results } = state.state1;
-        return {
-            input,
-            results
-        }
-    }, 
-    {
-        onChange: actions.state1.input,
-        getResults: actions.state1.getResults,
-        reset: actions.state1.reset
-    }, 
-    ({ input, results, onChange, getResults, reset, classes }) => {
-        return (
-            <>
-                <input value={input} onChange={event => onChange(event.target.value)} />
-                <button onClick={getResults} className={classes.button}> Get Results </button>
-                <button onClick={reset}>Reset</button>
-                <ul>
-                    {results.map(result => {
-                        return <li>{result}</li>
-                    })}
-                </ul>
-            </>
-        )
-    },
-    {button: {background: 'green'}},
-)
-```
-
-#### Usage of `connectedWithOwnProps`
-```tsx
-import React from 'react';
-import { actions, createConnectedProps, AppState } from "./store";
-
-export const { connectedWithOwnProps } = createConnectedProps<AppState>();
-
-export const { Connected: State1ComponentConnected } = connectedWithOwnProps<{valueFromProp: string;}>()(
-    (state, {valueFromProp}) => {
+const connectedProps = connectProps(
+    (state, {valueFromProp}: {valueFromProp: string;}) => {
         const { input, results } = state.state1;
         return {
             input,
@@ -268,8 +188,10 @@ export const { Connected: State1ComponentConnected } = connectedWithOwnProps<{va
         onChange: actions.state1.input,
         getResults: actions.state1.getResults,
         reset: actions.state1.reset
-    }, 
-    ({ input, results, onChange, getResults, reset, classes, valueFromProp }) => {
+    });
+
+export const { Connected: State1ComponentConnected } = connectedProps(
+    { input, results, onChange, getResults, reset, classes, valueFromProp }) => {
         return (
             <>
                 <input value={input} onChange={event => onChange(event.target.value)} />
@@ -282,23 +204,16 @@ export const { Connected: State1ComponentConnected } = connectedWithOwnProps<{va
                 </ul>
             </>
         )
-    },
-    {button: {background: 'green'}},
+    })
 )
 ```
 
 ## `withStyles`
 `StyleComponent` creates a component with JSS styles given as props
+
 ### Usage of `withStyles`
 ```tsx
 import { withStyles, WithStyles } from './tquinlan92-typescript-redux-utils';
-
-// Example with functional component in call
-const StyledComponent = withStyles({button: {background: 'green'}})({classes}) => {
-    return <button className={classes.button} />
-})
-
-// Example with functional component outside of call
 
 const styles = {
     button: {

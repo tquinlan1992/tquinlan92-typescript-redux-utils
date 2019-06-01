@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedStore, createConnectedProps } from './tquinlan92-typescript-redux-utils';
+import { makeNestedStore, createConnectProps } from './tquinlan92-typescript-redux-utils';
 import { createLogger } from 'redux-logger';
 import { state1 } from './state1';
 import { state1ThunkActions } from './state1Thunks';
@@ -25,4 +25,4 @@ export type AppState = typeof initalState;
 
 export type AppThunk = ThunkAction<void, AppState, void, AnyAction>;
 
-export const { connectedWithOwnProps, connectedNoOwnProps } = createConnectedProps<AppState>();
+export const connectProps = createConnectProps<AppState>();
