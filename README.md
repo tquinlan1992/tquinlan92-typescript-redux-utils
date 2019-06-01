@@ -161,7 +161,7 @@ createConnectProps takes a `AppState` as a generic type.  It returns back a meth
 
 ```ts
 function createConnectProps<AppState>(): <MapStateToProps extends (state: AppState, ownProps: any) => {}, MapDispatchToProps extends MapDispatchToPropsParam<{}, {}>>(mapStateToProps: MapStateToProps, mapDispatchToProps?: MapDispatchToProps) => (Component: React.FunctionComponent<ReturnType<MapStateToProps> & MapDispatchToProps>) => {
-    Component: React.FunctionComponent<ReturnType<MapStateToProps> & MapDispatchToProps & WithStyles<Styles>>;
+    Component: React.FunctionComponent<ReturnType<MapStateToProps> & MapDispatchToProps>;
     mapStateToProps: MapStateToProps;
     mapDispatchToProps: MapDispatchToProps;
     Connected: import("react-redux").ConnectedComponentClass<(props: any) => React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<any, any, any>)>, Pick<any, never> & Parameters<MapStateToProps>[1]>;
@@ -171,7 +171,7 @@ function createConnectProps<AppState>(): <MapStateToProps extends (state: AppSta
 #### Usage of `connectProps`
 ```tsx
 import React from 'react';
-import { actions, createConnectedProps, AppState } from "./store";
+import { actions, createConnectProps, AppState } from "./store";
 
 const connectProps = createConnectProps<AppState>();
 

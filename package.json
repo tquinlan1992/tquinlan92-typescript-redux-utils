@@ -1,7 +1,7 @@
 {
   "name": "tquinlan92-typescript-redux-utils",
   "author": "Tom Quinlan<tquinlan1992@gmail.com>",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/tquinlan1992/tquinlan92-typescript-redux-utils"
@@ -17,6 +17,7 @@
     "lodash": "^4.17.10",
     "react-redux": "^7.0.3",
     "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0",
     "typescript-fsa": "^2.5.0"
   },
   "devDependencies": {
@@ -35,7 +36,6 @@
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "tquinlan92-typescript-redux-utils": "^1.10.3",
     "typescript": "^3.4.5"
