@@ -2,8 +2,7 @@ import { AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
 import { makeNestedStore, createConnectProps } from './tquinlan92-typescript-redux-utils';
 import { createLogger } from 'redux-logger';
-import { state1 } from './state1';
-import { state1ThunkActions } from './state1Thunks';
+import { state1, state1ThunkActions } from './state1';
 import { merge } from 'lodash';
 
 const logger = createLogger();
