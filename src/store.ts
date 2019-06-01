@@ -13,7 +13,8 @@ export const initialStates = {
 
 export const {
     actions: storeActions,
-    reducers, selectors,
+    reducers, 
+    selectors,
     initalState,
     reducer,
     store

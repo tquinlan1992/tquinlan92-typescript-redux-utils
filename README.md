@@ -8,7 +8,15 @@ makeNestedSimpleStore creates a nested redux store with thunk actions.  It gives
 The second parameter takes `middleware` to apply to the store returned.
 
 ```ts
-export const { actions: actions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
+export const {
+    actions,
+    reducers, 
+    selectors,
+    initalState,
+    reducer,
+    store
+} =
+    makeNestedStore(initialStates, [/* middleware */]);
 ```
 
 The code below this shows the full basic usage.  There's also a typescript create-react-app, redux, and redux thunk usage starting with `./src/index.tsx` demonstrating the usage in a real app.  The app example is just a create-react-app with typescript and the instructions can be found here [here](./Create-React-App.md).
