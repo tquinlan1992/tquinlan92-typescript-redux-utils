@@ -7,9 +7,8 @@ const state1NoActions = {
     results: [] as string[]
 }
 
-
 export const state1 = mergeStateWithActions(state1NoActions, {
-    immerInput: (state, {value}: {value: number}) => {
+    immuInput: (state, {value}: {value: number}) => {
         state.input = String(value);
     }
 });
