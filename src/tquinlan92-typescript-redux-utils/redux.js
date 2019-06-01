@@ -47,6 +47,10 @@ export function getCreators(creators) {
     return mapValues(creators, "actionCreator");
 }
 
+function getActionName(reducerName, actionName) {
+    return JSON.stringify({ reducerName, actionName });
+}
+
 export function makeActionCreatorWithReducerWithPrefix(actionName, reducer) {
     return (reducerName) => makeActionCreatorWithReducer(JSON.stringify({ reducerName, actionName }), reducer);
 }
@@ -75,7 +79,7 @@ export function testRunner(reducer) {
 export function makeSimpleReducer(reducerName, initialState, otherActions) {
     const actions = mapValues(initialState, (propertyFromState, key) => {
         const creatorReducer = makeActionCreatorWithReducerWithPrefix(
-            `UPDATE_${key.toUpperCase()}`,
+            `UPDATE_${key}`,
             (state, newValue) => {
                 return assign({}, state,
                     { [key]: newValue }
@@ -85,7 +89,7 @@ export function makeSimpleReducer(reducerName, initialState, otherActions) {
         return creatorReducer(reducerName);
     });
 
-    const reset = makeActionCreatorWithReducer(`${reducerName} - RESET`,
+    const reset = makeActionCreatorWithReducer(getActionName(reducerName, 'Reset'),
         (state, keysToReset) => {
             return assign({},
                 state,
@@ -93,18 +97,18 @@ export function makeSimpleReducer(reducerName, initialState, otherActions) {
             );
         }
     );
-    const resetAllActionCreatorReducer = makeActionCreatorWithReducer(`${reducerName} - RESET_All`,
+    const resetAllActionCreatorReducer = makeActionCreatorWithReducer(getActionName(reducerName, 'RESET_ALL'),
         () => {
             return initialState;
         }
     );
     const resetAll = () => resetAllActionCreatorReducer.actionCreator(null);
-    const setAll = makeActionCreatorWithReducer(`${reducerName} - SET_ALL`,
+    const setAll = makeActionCreatorWithReducer(getActionName(reducerName, 'SET_ALL'),
         (state, newValue) => {
             return newValue;
         }
     );
-    const set = makeActionCreatorWithReducer(`${reducerName} - SET`,
+    const set = makeActionCreatorWithReducer(getActionName(reducerName, 'SET'),
         (state, newStateValues) => {
             return assign({},
                 state,
@@ -112,12 +116,15 @@ export function makeSimpleReducer(reducerName, initialState, otherActions) {
             );
         }
     );
+    const createdOtherActions = mapValues(otherActions, (reducer, key) => {
+        return makeActionCreatorWithReducer(getActionName(reducerName, key), reducer, true);
+    })
     return {
         actions: assign({},
-            getCreators(assign({}, actions, { setAll, set, reset }, otherActions)),
+            getCreators(assign({}, actions, { setAll, set, reset }, createdOtherActions)),
             { resetAll }
         ),
-        reducer: createReducer(initialState, assign({}, actions, { resetAllActionCreatorReducer, setAll, set, reset }, otherActions)),
+        reducer: createReducer(initialState, assign({}, actions, { resetAllActionCreatorReducer, setAll, set, reset }, createdOtherActions)),
     };
 }
 
@@ -134,7 +141,6 @@ export function makeNestedSimpleReducerSimpleActions(state) {
     const selectors = mapValues(state, (stateDepth1, stateDepth1Key) => {
         return mapValues(stateDepth1, (stateDepth2Value, stateDepth2Key) => {
             return (selectorState) => {
-                console.log(`state.${stateDepth1Key}.${stateDepth2Key}`)
                 return (selectorState)[stateDepth1Key][stateDepth2Key];
             }
         });
@@ -153,5 +159,12 @@ export function makeNestedSimpleStore(state, thunkActions) {
         actions: actionsWithThunks,
         reducers,
         selectors
+    };
+}
+
+export function mergeStateWithActions(state, actions) {
+    return {
+        ...state,
+        actions
     };
 }

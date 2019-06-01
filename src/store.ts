@@ -1,10 +1,10 @@
 import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
-import { makeNestedSimpleStore, createConnectedProps, getActionCreatorWithImmer } from 'tquinlan92-typescript-redux-utils';
+import { makeNestedSimpleStore, createConnectedProps, MergeStateWithActions } from './tquinlan92-typescript-redux-utils';
 import { createLogger } from 'redux-logger';
 
 const logger = createLogger({
-  // ...options
+    // ...options
 });
 
 const state1NoActions = {
@@ -12,19 +12,12 @@ const state1NoActions = {
     results: [] as string[]
 }
 
-type State1 = typeof state1NoActions;
 
-const state1ActionCreatorWithImmer = getActionCreatorWithImmer<State1>();
-
-const state1 = {
-    input: '',
-    results: [] as string[],
-    actions: {
-        immerInput: state1ActionCreatorWithImmer<{value: string;}>('nextOne', (state, {value}) => {
-            state.input = value;
-        })
+const state1 = MergeStateWithActions(state1NoActions, {
+    immerInput: (state, {value}: {value: number}) => {
+        state.input = String(value);
     }
-};
+});
 
 const initialStates = {
     state1
@@ -46,15 +39,15 @@ const thunkActions = {
     state1: state1ThunkActions
 };
 
-export const { actions: storeActions, reducers, selectors } = makeNestedSimpleStore(initialStates, thunkActions);
+export const { actions: storeActions, reducers, selectors } = 
+makeNestedSimpleStore(initialStates, thunkActions);
 
-export const t = selectors.state1.input
-
+storeActions.state1.resetAll();
 
 const appReducer = combineReducers(reducers);
 
 export const reduxStore = createStore(appReducer, applyMiddleware(thunk, logger));
 
-reduxStore.dispatch(storeActions.state1.immerInput({value: '10'}));
+reduxStore.dispatch(storeActions.state1.immerInput({ value: 10 }));
 
 export const { connectedWithOwnProps, connectedNoOwnProps } = createConnectedProps<AppState>();

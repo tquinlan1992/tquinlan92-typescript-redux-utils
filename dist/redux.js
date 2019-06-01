@@ -1,157 +1,160 @@
-import { find, mapValues, assign, merge, omit, pick } from 'lodash';
-import actionCreatorFactory, { isType } from "typescript-fsa";
-import produce from "immer";
-
-export function createReducer(initialState, actions) {
-    return (state = initialState, incomingAction) => {
-        const actionMatch = find(actions, action => {
-            return isType(incomingAction, action.actionCreator);
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = require("lodash");
+var typescript_fsa_1 = require("typescript-fsa");
+var immer_1 = require("immer");
+function createReducer(initialState, actions) {
+    return function (state, incomingAction) {
+        if (state === void 0) { state = initialState; }
+        var actionMatch = lodash_1.find(actions, function (action) {
+            return typescript_fsa_1.isType(incomingAction, action.actionCreator);
         });
         if (actionMatch) {
             return actionMatch.reducer(state, incomingAction.payload);
-        } else {
+        }
+        else {
             return state;
         }
     };
 }
-export function makeActionCreatorWithReducer(name, reducer, withImmer) {
-    const SimpleActionCreator = actionCreatorFactory();
+exports.createReducer = createReducer;
+function makeActionCreatorWithReducer(name, reducer, withImmer) {
+    var SimpleActionCreator = typescript_fsa_1.default();
     return {
         actionCreator: SimpleActionCreator(name),
-        reducer: (state, action) => {
+        reducer: function (state, action) {
             if (withImmer) {
-                return produce(state, draft => {
+                return immer_1.default(state, function (draft) {
                     reducer(draft, action);
                 });
-            } else {
-                return reducer(state, action)
+            }
+            else {
+                return reducer(state, action);
             }
         }
     };
 }
-
-
-export function getActionCreator() {
-    return (name, reducer) => {
+exports.makeActionCreatorWithReducer = makeActionCreatorWithReducer;
+function getActionCreator() {
+    return function (name, reducer) {
         return makeActionCreatorWithReducer(name, reducer);
-    }
+    };
 }
-
-export function getActionCreatorWithImmer() {
-    return (name, reducer) => {
+exports.getActionCreator = getActionCreator;
+function getActionCreatorWithImmer() {
+    return function (name, reducer) {
         return makeActionCreatorWithReducer(name, reducer, true);
-    }
+    };
 }
-
-export function getCreators(creators) {
-    return mapValues(creators, "actionCreator");
+exports.getActionCreatorWithImmer = getActionCreatorWithImmer;
+function getCreators(creators) {
+    return lodash_1.mapValues(creators, "actionCreator");
 }
-
-export function makeActionCreatorWithReducerWithPrefix(actionName, reducer) {
-    return (reducerName) => makeActionCreatorWithReducer(JSON.stringify({ reducerName, actionName }), reducer);
+exports.getCreators = getCreators;
+function getActionName(reducerName, actionName) {
+    return JSON.stringify({ reducerName: reducerName, actionName: actionName });
 }
-
-export function getReducersFromCombinedActionReducer(creators) {
-    return mapValues(creators, "reducer");
+function makeActionCreatorWithReducerWithPrefix(actionName, reducer) {
+    return function (reducerName) { return makeActionCreatorWithReducer(JSON.stringify({ reducerName: reducerName, actionName: actionName }), reducer); };
 }
-
-export function getActionsFromCombinedActionReducer(creators) {
-    return mapValues(creators, "actions");
+exports.makeActionCreatorWithReducerWithPrefix = makeActionCreatorWithReducerWithPrefix;
+function getReducersFromCombinedActionReducer(creators) {
+    return lodash_1.mapValues(creators, "reducer");
 }
-
-export function getActionsAndReducersFromCombinedActionReducer(creators) {
+exports.getReducersFromCombinedActionReducer = getReducersFromCombinedActionReducer;
+function getActionsFromCombinedActionReducer(creators) {
+    return lodash_1.mapValues(creators, "actions");
+}
+exports.getActionsFromCombinedActionReducer = getActionsFromCombinedActionReducer;
+function getActionsAndReducersFromCombinedActionReducer(creators) {
     return {
         actions: getActionsFromCombinedActionReducer(creators),
         reducers: getReducersFromCombinedActionReducer(creators)
     };
 }
-
-export function testRunner(reducer) {
-    return (initalState, action) => {
+exports.getActionsAndReducersFromCombinedActionReducer = getActionsAndReducersFromCombinedActionReducer;
+function testRunner(reducer) {
+    return function (initalState, action) {
         return reducer(initalState, action);
     };
 }
-
-export function makeSimpleReducer(reducerName, initialState, otherActions) {
-    const actions = mapValues(initialState, (propertyFromState, key) => {
-        const creatorReducer = makeActionCreatorWithReducerWithPrefix(
-            `UPDATE_${key.toUpperCase()}`,
-            (state, newValue) => {
-                return assign({}, state,
-                    { [key]: newValue }
-                );
-            }
-        );
+exports.testRunner = testRunner;
+function makeSimpleReducer(reducerName, initialState, otherActions) {
+    var actions = lodash_1.mapValues(initialState, function (propertyFromState, key) {
+        var creatorReducer = makeActionCreatorWithReducerWithPrefix("UPDATE_" + key, function (state, newValue) {
+            var _a;
+            return lodash_1.assign({}, state, (_a = {}, _a[key] = newValue, _a));
+        });
         return creatorReducer(reducerName);
     });
-
-    const reset = makeActionCreatorWithReducer(`${reducerName} - RESET`,
-        (state, keysToReset) => {
-            return assign({},
-                state,
-                pick(initialState, keysToReset)
-            );
-        }
-    );
-    const resetAllActionCreatorReducer = makeActionCreatorWithReducer(`${reducerName} - RESET_All`,
-        () => {
-            return initialState;
-        }
-    );
-    const resetAll = () => resetAllActionCreatorReducer.actionCreator(null);
-    const setAll = makeActionCreatorWithReducer(`${reducerName} - SET_ALL`,
-        (state, newValue) => {
-            return newValue;
-        }
-    );
-    const set = makeActionCreatorWithReducer(`${reducerName} - SET`,
-        (state, newStateValues) => {
-            return assign({},
-                state,
-                newStateValues
-            );
-        }
-    );
+    var reset = makeActionCreatorWithReducer(getActionName(reducerName, 'Reset'), function (state, keysToReset) {
+        return lodash_1.assign({}, state, lodash_1.pick(initialState, keysToReset));
+    });
+    var resetAllActionCreatorReducer = makeActionCreatorWithReducer(getActionName(reducerName, 'RESET_ALL'), function () {
+        return initialState;
+    });
+    var resetAll = function () { return resetAllActionCreatorReducer.actionCreator(null); };
+    var setAll = makeActionCreatorWithReducer(getActionName(reducerName, 'SET_ALL'), function (state, newValue) {
+        return newValue;
+    });
+    var set = makeActionCreatorWithReducer(getActionName(reducerName, 'SET'), function (state, newStateValues) {
+        return lodash_1.assign({}, state, newStateValues);
+    });
+    var createdOtherActions = lodash_1.mapValues(otherActions, function (reducer, key) {
+        return makeActionCreatorWithReducer(getActionName(reducerName, key), reducer, true);
+    });
     return {
-        actions: assign({},
-            getCreators(assign({}, actions, { setAll, set, reset }, otherActions)),
-            { resetAll }
-        ),
-        reducer: createReducer(initialState, assign({}, actions, { resetAllActionCreatorReducer, setAll, set, reset }, otherActions)),
+        actions: lodash_1.assign({}, getCreators(lodash_1.assign({}, actions, { setAll: setAll, set: set, reset: reset }, createdOtherActions)), { resetAll: resetAll }),
+        reducer: createReducer(initialState, lodash_1.assign({}, actions, { resetAllActionCreatorReducer: resetAllActionCreatorReducer, setAll: setAll, set: set, reset: reset }, createdOtherActions)),
     };
 }
-
-export function getActions(creators) {
-    return mapValues(creators, "actions");
+exports.makeSimpleReducer = makeSimpleReducer;
+function getActions(creators) {
+    return lodash_1.mapValues(creators, "actions");
 }
-
-export function makeNestedSimpleReducerSimpleActions(state) {
-    const actionsReducers = mapValues(state, (value, key) => {
-        return makeSimpleReducer(key, omit(value, 'actions'), value.actions);
+exports.getActions = getActions;
+function makeNestedSimpleReducerSimpleActions(state) {
+    var actionsReducers = lodash_1.mapValues(state, function (value, key) {
+        return makeSimpleReducer(key, lodash_1.omit(value, 'actions'), value.actions);
     });
-    const reducers = mapValues(actionsReducers, 'reducer');
-    const actions = getActions(actionsReducers);
-    const selectors = mapValues(state, (stateDepth1, stateDepth1Key) => {
-        return mapValues(stateDepth1, (stateDepth2Value, stateDepth2Key) => {
-            return (selectorState) => {
-                console.log(`state.${stateDepth1Key}.${stateDepth2Key}`)
+    var reducers = lodash_1.mapValues(actionsReducers, 'reducer');
+    var actions = getActions(actionsReducers);
+    var selectors = lodash_1.mapValues(state, function (stateDepth1, stateDepth1Key) {
+        return lodash_1.mapValues(stateDepth1, function (stateDepth2Value, stateDepth2Key) {
+            return function (selectorState) {
                 return (selectorState)[stateDepth1Key][stateDepth2Key];
-            }
+            };
         });
-    })
+    });
     return ({
-        actions,
-        reducers,
-        selectors
+        actions: actions,
+        reducers: reducers,
+        selectors: selectors
     });
 }
-
-export function makeNestedSimpleStore(state, thunkActions) {
-    const { actions: simpleActions, reducers, selectors } = makeNestedSimpleReducerSimpleActions(state);
-    const actionsWithThunks = merge(simpleActions, thunkActions);
+exports.makeNestedSimpleReducerSimpleActions = makeNestedSimpleReducerSimpleActions;
+function makeNestedSimpleStore(state, thunkActions) {
+    var _a = makeNestedSimpleReducerSimpleActions(state), simpleActions = _a.actions, reducers = _a.reducers, selectors = _a.selectors;
+    var actionsWithThunks = lodash_1.merge(simpleActions, thunkActions);
     return {
         actions: actionsWithThunks,
-        reducers,
-        selectors
+        reducers: reducers,
+        selectors: selectors
     };
 }
+exports.makeNestedSimpleStore = makeNestedSimpleStore;
+function mergeStateWithActions(state, actions) {
+    return __assign({}, state, { actions: actions });
+}
+exports.mergeStateWithActions = mergeStateWithActions;

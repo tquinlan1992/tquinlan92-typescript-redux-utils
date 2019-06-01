@@ -36,7 +36,7 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
         <>
             <input value={input} onChange={event => onChange(event.target.value)} />
             <button onClick={getResults} className={classes.button}> Get Results </button>
-            <button onClick={resetAll}>Reset</button>
+            <button onClick={() => resetAll()}>Reset</button>
             <ul>
                 {results.map(result => {
                     return <li key={result}>{result}</li>

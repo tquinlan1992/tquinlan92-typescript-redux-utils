@@ -1,14 +1,13 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-      "sourceMap": true,
+      "allowJs": true,
       "target": "es5",
       "jsx": "react",
       "module": "CommonJS",
       "moduleResolution": "node",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
-      "declaration": true,
       "noUnusedLocals": true,
       "noImplicitAny": true,
       "noImplicitReturns": true,
