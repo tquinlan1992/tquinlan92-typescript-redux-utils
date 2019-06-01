@@ -1,7 +1,7 @@
 {
   "name": "tquinlan92-typescript-redux-utils",
   "author": "Tom Quinlan<tquinlan1992@gmail.com>",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/tquinlan1992/tquinlan92-typescript-redux-utils"
@@ -20,6 +20,10 @@
     "typescript-fsa": "^2.5.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
     "@types/jest": "24.0.13",
     "@types/node": "12.0.2",
     "@types/react": "16.8.17",
@@ -42,8 +46,8 @@
     "test": "react-scripts --inspect-brk test",
     "eject": "react-scripts eject",
     "copy-types": "copyfiles -u 2 -e ./src/tquinlan92-typescript-redux-utils/**/*.test.ts ./src/tquinlan92-typescript-redux-utils/**/*.d.ts dist",
-    "compile-npm": "tsc -p ./src/tquinlan92-typescript-redux-utils",
-    "build-npm": "npm run copy-types && npm run compile-npm"
+    "build-npm": "npm run build-js && npm run copy-types",
+    "build-js": "cd src/tquinlan92-typescript-redux-utils && babel ./**/*.js --out-dir ../../dist"
   },
   "eslintConfig": {
     "extends": "react-app"
