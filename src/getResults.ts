@@ -1,7 +1,7 @@
-import { AppThunk, storeActions } from "./store";
+import { AppThunk, actions } from "./store";
 
 export function getResults(): AppThunk {
     return async (dispatch) => {
-        dispatch(storeActions.state1.results(['item1', 'item2', 'item3']))
+        dispatch(actions.state1.results(['item1', 'item2', 'item3']))
     };
 }

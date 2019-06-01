@@ -1,6 +1,7 @@
 import { Dictionary, Omit } from 'lodash';
 import { Action, AnyAction, ActionCreator } from "typescript-fsa";
-import { Reducer } from 'redux';
+import { Reducer, Store, StateExt, Ext, Middleware } from 'redux';
+
 export interface ActionCreatorWithReducer<StateType> {
     actionCreator: ActionCreator<any>;
     reducer: (state: StateType, action: any) => StateType;
@@ -149,7 +150,7 @@ export type StateWithActions<State> = {
 
 export declare function mergeStateWithActions<State, Actions extends ActionsForState<State>>(state: State, actions: Actions): { state: State, actions: Actions };
 
-export declare function makeNestedStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions): {
+export declare function makeNestedStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions, middleware?: Middleware[]): {
     actions: { [P in keyof State]: { [A in keyof State[P]['state']]: ActionCreator<State[P]['state'][A]>; } & {
         reset: ActionCreator<(keyof State[P]['state'])[]>;
         resetAll: () => {
@@ -164,6 +165,8 @@ export declare function makeNestedStore<State extends AppStateWithActions<State>
     } & { [A in keyof State[P]["actions"]]:  ActionCreator<Parameters<State[P]["actions"][A]>[1]>; }; } & ThunkActions;
     reducers: { [P in keyof State]: Reducer<NestedStatePicked<State>, AnyAction>; };
     selectors: { [P in keyof State]: { [A in keyof State[P]['state']]: (state: NestedStatePick<State>) => State[P]['state'][A]; }; };
-    initalState: NestedStatePick<State>
+    initalState: NestedStatePick<State>,
+    reducer: Reducer<State>,
+    store: Store<State>
 };
 export { };

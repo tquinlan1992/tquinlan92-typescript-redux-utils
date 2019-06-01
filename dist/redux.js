@@ -1,6 +1,7 @@
 import { find, mapValues, assign, merge, pick } from 'lodash';
 import actionCreatorFactory, { isType } from "typescript-fsa";
 import produce from "immer";
+import { combineReducers, createStore, applyMiddleware } from 'redux';
 export function createReducer(initialState, actions) {
   return (state = initialState, incomingAction) => {
     const actionMatch = find(actions, action => {
@@ -138,18 +139,21 @@ export function makeNestedSimpleReducerSimpleActions(state) {
     selectors
   };
 }
-export function makeNestedStore(state, thunkActions) {
+export function makeNestedStore(state, thunkActions, middleware) {
   const {
     actions: simpleActions,
     reducers,
     selectors
   } = makeNestedSimpleReducerSimpleActions(state);
   const actionsWithThunks = merge(simpleActions, thunkActions);
+  const reducer = combineReducers(reducers);
   return {
     actions: actionsWithThunks,
     reducers,
     selectors,
-    initialState: state
+    initialState: state,
+    reducer,
+    store: createStore(reducer, applyMiddleware(...middleware))
   };
 }
 export function mergeStateWithActions(state, actions) {

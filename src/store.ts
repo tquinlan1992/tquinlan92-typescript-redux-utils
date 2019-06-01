@@ -1,24 +1,24 @@
-import { combineReducers, createStore, applyMiddleware, AnyAction } from 'redux';
+import { AnyAction } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
 import { makeNestedStore, createConnectedProps } from './tquinlan92-typescript-redux-utils';
 import { createLogger } from 'redux-logger';
-import { state1ThunkActions, initialStates } from './state1';
+import { state1ThunkActions, state1 } from './state1';
 
 const logger = createLogger();
+
+export const initialStates = {
+    state1
+};
 
 const thunkActions = {
     state1: state1ThunkActions
 };
 
-export const { actions: storeActions, reducers, selectors, initalState } = 
-makeNestedStore(initialStates, thunkActions);
+export const { actions, reducers, selectors, initalState, reducer, store } = 
+makeNestedStore(initialStates, thunkActions, [thunk, logger]);
 
 type AppState = typeof initalState;
 
 export type AppThunk = ThunkAction<void, AppState, void, AnyAction>;
-
-const appReducer = combineReducers(reducers);
-
-export const reduxStore = createStore(appReducer, applyMiddleware(thunk, logger));
 
 export const { connectedWithOwnProps, connectedNoOwnProps } = createConnectedProps<AppState>();

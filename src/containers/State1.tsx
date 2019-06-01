@@ -1,5 +1,5 @@
 import React from 'react';
-import { storeActions, connectedNoOwnProps, connectedWithOwnProps, selectors } from "../store";
+import { actions, connectedNoOwnProps, connectedWithOwnProps, selectors } from "../store";
 import { WithStyles, withStyles } from '../tquinlan92-typescript-redux-utils';
 import { times } from 'lodash';
 import { createSelector } from 'reselect'
@@ -26,9 +26,9 @@ export const { Connected: State1ComponentConnected } = connectedNoOwnProps(
         }
     },
     {
-        onChange: storeActions.state1.input,
-        getResults: storeActions.state1.getResults,
-        resetAll: storeActions.state1.resetAll
+        onChange: actions.state1.input,
+        getResults: actions.state1.getResults,
+        resetAll: actions.state1.resetAll
     },
     { button: { background: 'green' } }
 )(({ input, results, onChange, getResults, resetAll, classes }) => {
