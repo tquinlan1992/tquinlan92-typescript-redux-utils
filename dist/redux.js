@@ -1,4 +1,4 @@
-import { find, mapValues, assign, merge, omit, pick } from 'lodash';
+import { find, mapValues, assign, merge, pick } from 'lodash';
 import actionCreatorFactory, { isType } from "typescript-fsa";
 import produce from "immer";
 export function createReducer(initialState, actions) {
@@ -121,12 +121,12 @@ export function getActions(creators) {
 }
 export function makeNestedSimpleReducerSimpleActions(state) {
   const actionsReducers = mapValues(state, (value, key) => {
-    return makeSimpleReducer(key, omit(value, 'actions'), value.actions);
+    return makeSimpleReducer(key, value.state, value.actions);
   });
   const reducers = mapValues(actionsReducers, 'reducer');
   const actions = getActions(actionsReducers);
   const selectors = mapValues(state, (stateDepth1, stateDepth1Key) => {
-    return mapValues(stateDepth1, (stateDepth2Value, stateDepth2Key) => {
+    return mapValues(stateDepth1.state, (stateDepth2Value, stateDepth2Key) => {
       return selectorState => {
         return selectorState[stateDepth1Key][stateDepth2Key];
       };
@@ -138,7 +138,7 @@ export function makeNestedSimpleReducerSimpleActions(state) {
     selectors
   };
 }
-export function makeNestedSimpleStore(state, thunkActions) {
+export function makeNestedStore(state, thunkActions) {
   const {
     actions: simpleActions,
     reducers,
@@ -148,11 +148,13 @@ export function makeNestedSimpleStore(state, thunkActions) {
   return {
     actions: actionsWithThunks,
     reducers,
-    selectors
+    selectors,
+    initialState: state
   };
 }
 export function mergeStateWithActions(state, actions) {
-  return { ...state,
+  return {
+    state,
     actions
   };
 }

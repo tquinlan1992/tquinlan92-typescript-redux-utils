@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { State1ComponentConnected, ComponentWithProps } from './State1Component';
+import { State1ComponentConnected, ComponentWithProps } from './containers/State1';
 
 const App: React.FC = () => {
   return (

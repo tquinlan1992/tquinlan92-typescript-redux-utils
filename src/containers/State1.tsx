@@ -1,6 +1,6 @@
 import React from 'react';
-import { storeActions, connectedNoOwnProps, connectedWithOwnProps, selectors } from "./store";
-import { WithStyles, withStyles } from './tquinlan92-typescript-redux-utils';
+import { storeActions, connectedNoOwnProps, connectedWithOwnProps, selectors } from "../store";
+import { WithStyles, withStyles } from '../tquinlan92-typescript-redux-utils';
 import { times } from 'lodash';
 import { createSelector } from 'reselect'
 

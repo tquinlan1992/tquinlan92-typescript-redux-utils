@@ -115,18 +115,20 @@ export declare function getActions<T extends {
 }>(creators: T): {
         [P in keyof T]: T[P]['actions'];
     };
-    declare type AppStateWithActions<InitialState extends {
-        [key: string]: any;
-    }> = {
-        [A in keyof InitialState]: {
-            actions: {
-                [P in keyof InitialState[A]['actions']]: (state: Omit<InitialState[A], 'actions'>, actionParams: any) => undefined | void;
-            };
+    
+declare type AppStateWithActions<InitialState extends {
+    [key: string]: any;
+}> = {
+    [A in keyof InitialState]: {
+        state: InitialState[A]['state'],
+        actions: {
+            [P in keyof InitialState[A]['actions']]: (state: InitialState[A]['state'], actionParams: any) => undefined | void;
         };
     };
+};
 
-type NestedStateOmitActions<State> = {
-    [C in keyof State]: Omit<State[C], 'actions'>
+export type NestedStatePick<State> = {
+    [C in keyof State]: State[C]['state']
 }
 
 export type ActionsForState<State> = {
@@ -145,11 +147,11 @@ export type StateWithActions<State> = {
         [P in keyof Omit<State, 'actions'>]: any
     }
 
-export declare function mergeStateWithActions<State, Actions extends ActionsForState<State>>(state: State, actions: Actions): State & { actions: Actions };
+export declare function mergeStateWithActions<State, Actions extends ActionsForState<State>>(state: State, actions: Actions): { state: State, actions: Actions };
 
-export declare function makeNestedSimpleStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions): {
-    actions: { [P in keyof State]: { [A in keyof Omit<State[P], "actions">]: ActionCreator<State[P][A]>; } & {
-        reset: ActionCreator<(keyof State[P])[]>;
+export declare function makeNestedStore<State extends AppStateWithActions<State>, ThunkActions>(state: State, thunkActions?: ThunkActions): {
+    actions: { [P in keyof State]: { [A in keyof State[P]['state']]: ActionCreator<State[P]['state'][A]>; } & {
+        reset: ActionCreator<(keyof State[P]['state'])[]>;
         resetAll: () => {
             (payload: undefined, meta?: {
                 [key: string]: any;
@@ -157,10 +159,11 @@ export declare function makeNestedSimpleStore<State extends AppStateWithActions<
             type: string;
             match: (action: AnyAction) => action is Action<undefined>;
         };
-        setAll: ActionCreator<Omit<State[P], 'actions'>>;
-        set: ActionCreator<Partial<State[P]>>;
+        setAll: ActionCreator<State[P]['state']>;
+        set: ActionCreator<Partial<State[P]['state']>>;
     } & { [A in keyof State[P]["actions"]]:  ActionCreator<Parameters<State[P]["actions"][A]>[1]>; }; } & ThunkActions;
-    reducers: { [P in keyof State]: Reducer<NestedStateOmitActions<State>[P], AnyAction>; };
-    selectors: { [P in keyof State]: { [A in keyof State[P]]: (state: NestedStateOmitActions<State>) => State[P][A]; }; };
+    reducers: { [P in keyof State]: Reducer<NestedStatePicked<State>, AnyAction>; };
+    selectors: { [P in keyof State]: { [A in keyof State[P]['state']]: (state: NestedStatePick<State>) => State[P]['state'][A]; }; };
+    initalState: NestedStatePick<State>
 };
 export { };
