@@ -2,6 +2,8 @@ import { Dictionary, Omit } from 'lodash';
 import { Action, AnyAction, ActionCreator } from "typescript-fsa";
 import { Reducer, Store, Middleware, AnyAction as ReduxAnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk'
+import { Provider, ProviderProps } from 'react-redux';
+import { Component } from 'react';
 
 export interface ActionCreatorWithReducer<StateType> {
     actionCreator: ActionCreator<any>;
@@ -157,6 +159,25 @@ export type StateWithActions<State> = {
 
 export declare function mergeStateWithActions<State, Actions extends ActionsForState<State>>(state: State, actions: Actions): { state: State, actions: Actions };
 
+/** 
+makeNestedSimpleStore 
+@param state - An object with states created with mergeStateWithActions
+@param middleware - redux middleware
+
+@remarks creates a nested redux store with thunk actions.  The state should be created using `mergeStateWithActions` 
+to create the inital states and actions.
+
+@returns
+It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  
+The `actions` include:
+    `simpleActions` to change the state with the same name as the state properties.
+    The `actions` passed into `mergeStateWithActions`
+    Methods: 
+    `set` - to update a partial of the state
+    `setAll`- to update the whole state
+    `reset` - to reset a partial of the state
+    `resetAll` - to reset the whole state
+    */
 export declare function makeNestedStore<State extends AppStateWithActions<State>>(state: State, middleware?: Middleware[]): {
     actions: { [P in keyof State]: { [A in keyof State[P]['state']]: ActionCreator<State[P]['state'][A]>; } & {
         reset: ActionCreator<(keyof State[P]['state'])[]>;
@@ -174,6 +195,7 @@ export declare function makeNestedStore<State extends AppStateWithActions<State>
     selectors: { [P in keyof State]: { [A in keyof State[P]['state']]: (state: NestedStatePick<State>) => State[P]['state'][A]; }; };
     initalState: NestedStatePick<State>,
     reducer: Reducer<State>,
-    store: Store<State>
+    store: Store<State>,
+    Provider: React.FC
 };
 export { };

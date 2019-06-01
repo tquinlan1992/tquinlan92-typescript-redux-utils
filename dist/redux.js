@@ -1,7 +1,9 @@
+import React from 'react';
 import { find, mapValues, assign, pick } from 'lodash';
 import actionCreatorFactory, { isType } from "typescript-fsa";
 import produce from "immer";
 import { combineReducers, createStore, applyMiddleware } from 'redux';
+import { Provider as ProviderReact } from 'react-redux';
 export function createReducer(initialState, actions) {
   return (state = initialState, incomingAction) => {
     const actionMatch = find(actions, action => {
@@ -146,13 +148,22 @@ export function makeNestedStore(state, middleware) {
     selectors
   } = makeNestedSimpleReducerSimpleActions(state);
   const reducer = combineReducers(reducers);
+  const store = createStore(reducer, applyMiddleware(...middleware));
+
+  const Provider = ({
+    children
+  }) => React.createElement(ProviderReact, {
+    store: store
+  }, " ", children, " ");
+
   return {
     actions,
     reducers,
     selectors,
     initialState: state,
     reducer,
-    store: createStore(reducer, applyMiddleware(...middleware))
+    store,
+    Provider
   };
 }
 export function mergeStateWithActions(state, actions) {

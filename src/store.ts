@@ -12,7 +12,7 @@ export const initialStates = {
     state1
 };
 
-export const { actions: storeActions, reducers, selectors, initalState, reducer, store } = 
+export const { actions: storeActions, reducers, selectors, initalState, reducer, store, Provider } = 
 makeNestedStore(initialStates, [thunk, logger]);
 
 const thunkActions = {
