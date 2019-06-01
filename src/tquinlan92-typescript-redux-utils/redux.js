@@ -1,9 +1,7 @@
-import React from 'react';
 import { find, mapValues, assign, pick } from 'lodash';
 import actionCreatorFactory, { isType } from "typescript-fsa";
 import produce from "immer";
 import { combineReducers, createStore, applyMiddleware } from 'redux';
-import { Provider as ProviderReact } from 'react-redux';
 
 export function createReducer(initialState, actions) {
     return (state = initialState, incomingAction) => {
@@ -159,15 +157,13 @@ export function makeNestedStore(state, middleware) {
     const { actions, reducers, selectors } = makeNestedSimpleReducerSimpleActions(state);
     const reducer = combineReducers(reducers);
     const store = createStore(reducer, applyMiddleware(...middleware));
-    const Provider = ({children}) => <ProviderReact store={store}> {children} </ProviderReact>
     return {
         actions,
         reducers,
         selectors,
         initialState: state,
         reducer,
-        store,
-        Provider
+        store
     };
 }
 

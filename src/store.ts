@@ -17,8 +17,7 @@ export const {
     reducers, selectors,
     initalState,
     reducer,
-    store,
-    Provider
+    store
 } =
     makeNestedStore(initialStates, [thunk, logger]);
 

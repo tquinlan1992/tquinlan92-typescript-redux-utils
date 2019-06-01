@@ -195,7 +195,6 @@ export declare function makeNestedStore<State extends AppStateWithActions<State>
     selectors: { [P in keyof State]: { [A in keyof State[P]['state']]: (state: NestedStatePick<State>) => State[P]['state'][A]; }; };
     initalState: NestedStatePick<State>,
     reducer: Reducer<State>,
-    store: Store<State>,
-    Provider: React.FC
+    store: Store<State>
 };
 export { };
