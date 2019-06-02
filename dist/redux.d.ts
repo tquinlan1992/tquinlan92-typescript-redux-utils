@@ -157,7 +157,7 @@ export type StateWithActions<State> = {
         [P in keyof Omit<State, 'actions'>]: any
     }
 
-export declare function mergeStateWithActions<State, Actions extends ActionsForState<State>>(state: State, actions: Actions): { state: State, actions: Actions };
+export declare function mergeStateWithActions<State, Actions extends ActionsForState<State>>(state: State, actions?: Actions): { state: State, actions: Actions };
 
 /** 
 makeNestedSimpleStore 
