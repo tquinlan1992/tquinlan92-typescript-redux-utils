@@ -15,7 +15,7 @@ const getResultsSelector = createSelector(
     mapResults
 )
 
-export const { Connected: State1ComponentConnected, Component } = connectProps(
+export const { Connected: State1ComponentConnected } = connectProps(
     (state, {value}) => {
         const input = selectors.state1.input(state);
         const results = getResultsSelector(state);
@@ -44,4 +44,4 @@ export const { Connected: State1ComponentConnected, Component } = connectProps(
     )
 });
 
-console.log('Component', Component);
+console.log('Component', State1ComponentConnected);

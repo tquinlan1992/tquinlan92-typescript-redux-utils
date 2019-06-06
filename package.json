@@ -1,7 +1,7 @@
 {
   "name": "tquinlan92-typescript-redux-utils",
   "author": "Tom Quinlan<tquinlan1992@gmail.com>",
-  "version": "1.13.8",
+  "version": "1.13.9",
   "repository": {
     "type": "git",
     "url": "https://github.com/tquinlan1992/tquinlan92-typescript-redux-utils"
@@ -9,7 +9,7 @@
   "description": "typescript redux and react utilities",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "dependencies": {
+  "peerDependencies": {
     "@types/jss": "^9.5.8",
     "@types/lodash": "^4.14.109",
     "immer": "^3.1.2",
