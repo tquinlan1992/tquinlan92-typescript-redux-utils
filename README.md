@@ -36,11 +36,11 @@ const state1 = mergeStateWithActions(
     }, 
     {
         
-        immerInput: (state, {value}: {value: String}) => {
+        immerInput: (state, {value}: {value: string}) => {
             state.input = value;
-        })
+        }
     }
-});
+);
 
 const initialStates = {
     state1,
