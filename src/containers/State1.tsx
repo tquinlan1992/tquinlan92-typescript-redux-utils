@@ -16,7 +16,7 @@ const getResultsSelector = createSelector(
 )
 
 export const { Connected: State1ComponentConnected } = connectProps(
-    (state, {value}) => {
+    (state) => {
         const input = selectors.state1.input(state);
         const results = getResultsSelector(state);
         return {

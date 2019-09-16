@@ -11,5 +11,5 @@ export declare function createConnectProps<AppState>(): <MapStateToProps extends
     Component: React.FunctionComponent<ReturnType<MapStateToProps> & ResolveThunks<MapDispatchToProps>>;
     mapStateToProps: MapStateToProps;
     mapDispatchToProps: MapDispatchToProps;
-    Connected: import("react-redux").ConnectedComponentClass<(props: any) => React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<any, any, any>)>, Pick<any, never> & Parameters<MapStateToProps>[1]>;
+    Connected: import("react-redux").ConnectedComponentClass<(props: any) => React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<any, any, any>)>, Pick<any, never> & Parameters<MapStateToProps>[1] | {}>;
 };
