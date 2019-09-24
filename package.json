@@ -49,7 +49,7 @@
     "redux-logger": "^3.0.6",
     "reselect": "^4.0.0",
     "tquinlan92-typescript-redux-utils": "^1.13.3",
-    "typescript": "^3.4.5"
+    "typescript": "^3.6.3"
   },
   "scripts": {
     "start": "react-scripts start",

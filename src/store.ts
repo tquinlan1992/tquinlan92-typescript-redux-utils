@@ -4,6 +4,7 @@ import { makeNestedStore, createConnectProps } from './tquinlan92-typescript-red
 import { createLogger } from 'redux-logger';
 import { state1, state1ThunkActions } from './state1';
 import { merge } from 'lodash';
+import { createSelector } from 'reselect';
 
 const logger = createLogger();
 
@@ -13,13 +14,19 @@ export const initialStates = {
 
 export const {
     actions: storeActions,
-    reducers, 
+    reducers,
     selectors,
     initalState,
     reducer,
     store
 } =
     makeNestedStore(initialStates, [thunk, logger]);
+
+export const inputWithResults = createSelector(
+    selectors.state1.input,
+    selectors.state1.results,
+    (input, results) => [...results, input]
+);
 
 const thunkActions = {
     state1: state1ThunkActions

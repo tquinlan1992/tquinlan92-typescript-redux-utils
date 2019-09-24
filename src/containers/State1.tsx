@@ -43,5 +43,3 @@ export const { Connected: State1ComponentConnected } = connectProps(
         </>
     )
 });
-
-console.log('Component', State1ComponentConnected);
