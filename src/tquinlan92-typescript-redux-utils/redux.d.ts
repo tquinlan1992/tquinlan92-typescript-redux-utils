@@ -359,24 +359,24 @@ export type StateWithActions<State> = {
   [P in keyof Omit<State, "actions">]: any;
 };
 
-export declare function mergeStateWithActions<
+export declare function createSlice<
   State,
   Actions extends ActionsForState<State>
 >(state: State, actions?: Actions): { state: State; actions: Actions };
 
 /** 
 makeNestedSimpleStore 
-@param state - An object with states created with mergeStateWithActions
+@param state - An object with states created with createSlice
 @param middleware - redux middleware
 
-@remarks creates a nested redux store with thunk actions.  The state should be created using `mergeStateWithActions` 
+@remarks creates a nested redux store with thunk actions.  The state should be created using `createSlice` 
 to create the inital states and actions.
 
 @returns
 It gives back `reducers` to use with `combineReducers` and  `actions` to update the state.  
 The `actions` include:
     `simpleActions` to change the state with the same name as the state properties.
-    The `actions` passed into `mergeStateWithActions`
+    The `actions` passed into `createSlice`
     Methods: 
     `set` - to update a partial of the state
     `setAll`- to update the whole state

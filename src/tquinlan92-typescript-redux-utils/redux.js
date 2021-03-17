@@ -183,7 +183,7 @@ export function makeNestedStore(state, middleware) {
   };
 }
 
-export function mergeStateWithActions(state, actions) {
+export function createSlice(state, actions) {
   return {
     state,
     actions,

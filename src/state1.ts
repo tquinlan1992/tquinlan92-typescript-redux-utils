@@ -1,5 +1,5 @@
 import {
-  mergeStateWithActions,
+  createSlice,
   ThunkActionsForState,
 } from "./tquinlan92-typescript-redux-utils";
 import { actions, AppState } from "./store";
@@ -10,12 +10,17 @@ export const state1ThunkActions: ThunkActionsForState<AppState> = {
   },
 };
 
-const state1NoActions = {
+interface State1 {
+  input: string;
+  results: string[];
+}
+
+const state1InitialState: State1 = {
   input: "",
-  results: [] as string[],
+  results: [],
 };
 
-export const state1 = mergeStateWithActions(state1NoActions, {
+export const state1 = createSlice(state1InitialState, {
   immerInput: (state, { value }: { value: number }) => {
     state.input = String(value);
   },
