@@ -167,7 +167,7 @@ export function makeNestedSimpleReducerSimpleActions(state) {
   };
 }
 
-export function makeNestedStore(state, middleware) {
+export function createSlicesStore(state, middleware) {
   const { actions, reducers, selectors } = makeNestedSimpleReducerSimpleActions(
     state
   );

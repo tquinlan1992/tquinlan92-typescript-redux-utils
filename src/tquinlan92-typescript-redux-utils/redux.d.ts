@@ -343,7 +343,7 @@ export type ActionsForStateWithActions<
 };
 
 export type ThunkActionsForState<AppState> = {
-  [key: string]: (params: any) => AppThunk<AppState>;
+  [key: string]: ThunkActionFunction<AppState>;
 };
 
 export type AppThunk<AppState> = ThunkAction<
@@ -352,6 +352,8 @@ export type AppThunk<AppState> = ThunkAction<
   void,
   ReduxAnyAction
 >;
+
+export type ThunkActionFunction<AppState> = (params: any) => AppThunk<AppState>;
 
 export type StateWithActions<State> = {
   actions: ActionsForState<Omit<State, "actions">>;
@@ -383,7 +385,7 @@ The `actions` include:
     `reset` - to reset a partial of the state
     `resetAll` - to reset the whole state
     */
-export declare function makeNestedStore<
+export declare function createSlicesStore<
   State extends AppStateWithActions<State>
 >(
   state: State,

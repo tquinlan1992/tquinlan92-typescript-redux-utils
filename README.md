@@ -2,7 +2,7 @@
 
 This package gives a few useful type-safe redux, react-redux, and react utilities.
 
-## `makeNestedStore`
+## `createSlicesStore`
 
 makeNestedSimpleStore creates a nested redux store with thunk actions. It gives back `reducers` to use with `combineReducers` and `actions` to update the state. The `actions` include `simpleActions` to change the state with the same name as the state properties. It also includes methods `set`, to set a partial state with type checking, `setAll` to set the state with type checking, `reset` to reset a state to its initial state, `resetAll` to reset the state whole to its initial state.
 
@@ -16,7 +16,7 @@ export const {
   initalState,
   reducer,
   store,
-} = makeNestedStore(initialStates, [
+} = createSlicesStore(initialStates, [
   /* middleware */
 ]);
 ```
@@ -34,7 +34,7 @@ import {
 } from "redux";
 import {
   createSlice,
-  makeNestedStore,
+  createSlicesStore,
 } from "tquinlan92-typescript-redux-utils";
 import thunk, { ThunkAction } from "redux-thunk";
 import { createSelector } from "reselect";
@@ -66,7 +66,7 @@ export const {
   initalState,
   reducer,
   store,
-} = makeNestedStore(initialStates, [thunk, logger]);
+} = createSlicesStore(initialStates, [thunk, logger]);
 
 export type AppState = typeof initalState;
 
@@ -163,7 +163,7 @@ describe("dispatching state1 actions", () => {
 
 ### `createSlice`
 
-`createSlice` takes two parameters `intialState` and `otherActions`. `otherActions` are reducers that will be typed to to the `initialState` passed and the second parameter to the reducer (the `action type`) will be typed for the `action creator` returned when used with `makeNestedStore`
+`createSlice` takes two parameters `intialState` and `otherActions`. `otherActions` are reducers that will be typed to to the `initialState` passed and the second parameter to the reducer (the `action type`) will be typed for the `action creator` returned when used with `createSlicesStore`
 
 ```ts
 import { createSlice } from 'tquinlan92-typescript-redux-utils`

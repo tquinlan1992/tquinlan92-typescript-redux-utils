@@ -1,8 +1,13 @@
 import {
+  AppThunk,
   createSlice,
   ThunkActionsForState,
 } from "./tquinlan92-typescript-redux-utils";
 import { actions, AppState } from "./store";
+
+const getResults = (): AppThunk<AppState> => (dispatch) => {
+  dispatch(actions.state1.results(["item1", "item2", "item3"]));
+};
 
 export const state1ThunkActions: ThunkActionsForState<AppState> = {
   getResults: () => (dispatch) => {
