@@ -1,7 +1,7 @@
-import { find, mapValues, assign, pick } from 'lodash';
-import actionCreatorFactory, { isType } from "typescript-fsa";
+import { find, mapValues, assign, pick } from "lodash";
+import actionCreatorFactory, { isType } from "../typescript-fsa";
 import produce from "immer";
-import { combineReducers, createStore, applyMiddleware } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from "redux";
 export function createReducer(initialState, actions) {
   return (state = initialState, incomingAction) => {
     const actionMatch = find(actions, action => {
@@ -83,19 +83,19 @@ export function makeSimpleReducer(reducerName, initialState, otherActions) {
     });
     return creatorReducer(reducerName);
   });
-  const reset = makeActionCreatorWithReducer(getActionName(reducerName, 'Reset'), (state, keysToReset) => {
+  const reset = makeActionCreatorWithReducer(getActionName(reducerName, "Reset"), (state, keysToReset) => {
     return assign({}, state, pick(initialState, keysToReset));
   });
-  const resetAllActionCreatorReducer = makeActionCreatorWithReducer(getActionName(reducerName, 'RESET_ALL'), () => {
+  const resetAllActionCreatorReducer = makeActionCreatorWithReducer(getActionName(reducerName, "RESET_ALL"), () => {
     return initialState;
   });
 
   const resetAll = () => resetAllActionCreatorReducer.actionCreator(null);
 
-  const setAll = makeActionCreatorWithReducer(getActionName(reducerName, 'SET_ALL'), (state, newValue) => {
+  const setAll = makeActionCreatorWithReducer(getActionName(reducerName, "SET_ALL"), (state, newValue) => {
     return newValue;
   });
-  const set = makeActionCreatorWithReducer(getActionName(reducerName, 'SET'), (state, newStateValues) => {
+  const set = makeActionCreatorWithReducer(getActionName(reducerName, "SET"), (state, newStateValues) => {
     return assign({}, state, newStateValues);
   });
   const createdOtherActions = mapValues(otherActions, (reducer, key) => {
@@ -124,7 +124,7 @@ export function makeNestedSimpleReducerSimpleActions(state) {
   const actionsReducers = mapValues(state, (value, key) => {
     return makeSimpleReducer(key, value.state, value.actions);
   });
-  const reducers = mapValues(actionsReducers, 'reducer');
+  const reducers = mapValues(actionsReducers, "reducer");
   const actions = getActions(actionsReducers);
   const selectors = mapValues(state, (stateDepth1, stateDepth1Key) => {
     return mapValues(stateDepth1.state, (stateDepth2Value, stateDepth2Key) => {
@@ -139,7 +139,7 @@ export function makeNestedSimpleReducerSimpleActions(state) {
     selectors
   };
 }
-export function makeNestedStore(state, middleware) {
+export function createSlicesStore(state, middleware) {
   const {
     actions,
     reducers,
@@ -156,7 +156,7 @@ export function makeNestedStore(state, middleware) {
     store
   };
 }
-export function mergeStateWithActions(state, actions) {
+export function createSlice(state, actions) {
   return {
     state,
     actions

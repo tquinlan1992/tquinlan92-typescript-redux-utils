@@ -9,7 +9,7 @@ export function withStyles(styles) {
   } = jss.createStyleSheet(styles).attach();
   return function (Component) {
     return props => {
-      return React.createElement(Component, _extends({
+      return /*#__PURE__*/React.createElement(Component, _extends({
         classes: classes
       }, props));
     };
