@@ -1,5 +1,5 @@
 import { Dictionary, Omit } from "lodash";
-import { Action, AnyAction, ActionCreator } from "../typescript-fsa";
+import { Action, AnyAction, ActionCreator } from "./typescript-fsa";
 import { Reducer, Store, Middleware, AnyAction as ReduxAnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Provider, ProviderProps } from "react-redux";

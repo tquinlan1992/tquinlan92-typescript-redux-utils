@@ -1,5 +1,5 @@
 import { find, mapValues, assign, pick } from "lodash";
-import actionCreatorFactory, { isType } from "../typescript-fsa";
+import actionCreatorFactory, { isType } from "./typescript-fsa";
 import produce from "immer";
 import { combineReducers, createStore, applyMiddleware } from "redux";
 export function createReducer(initialState, actions) {
